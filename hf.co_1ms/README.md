@@ -66,8 +66,8 @@ Run the Benchmark script in this folder. Change the parameters to GPU if you are
 
 | Seq.Len |  Nightly Torchscript (FP32) | Nightly Torchscript (INT8) | Intel Torchscript (FP32) | Intel TS (Int8) | ONNX (FP32) | ONNX (Int8) |
 |---------| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-| 16 |      |        ||1.96||1.24|
-| 128 | |    |         |9.59||7.48|
+| 16 |||5.86|1.96|2.76|1.24|
+| 128 |||16.65|9.59|13.63|7.48|
 
 ## GPU Benchmark Results
 
