@@ -70,12 +70,14 @@ Run the Benchmark script in this folder. Change the parameters to GPU if you are
 | 16 |6.14|2.49|5.86|1.96|2.76|1.24|
 | 128 |17.39|11.67|16.65|9.59|13.63|7.48|
 
-## GPU Benchmark Results
+## GPU Benchmark Results on A100 *NOT* T4 demo'ed in Infinity Video
 
-| Seq.Len |  Nightly Torchscript (FP32) | Nightly Torchscript (INT8) | Intel Torchscript (FP32) | Intel TS (Int8) | ONNX (FP32) | ONNX (Int8) |
-|---------| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-| 16 |      |        |||||
-| 128 | |    |        | ||||
+| Seq.Len |  1.11.0.dev20211003+cu111 Torchscript (FP32) | 1.11.0.dev20211003+cu111 Torchscript (FP16) | ONNX (FP32) | ONNX (FP16) |
+|---------| ----------- | ----------- | ----------- | ----------- 
+| 16 |3.10|2.77|0.81|0.83|
+| 128 |3.55|2.96|0.74|0.97|
+
+Detailed results ![here](result.csv)
 
 
 ### Sample CPU run
