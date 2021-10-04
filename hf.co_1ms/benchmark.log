@@ -1,0 +1,25 @@
+echo ort=true torch=false torchscript=true tensorflow=false gpu_fp32=false gpu_fp16=false cpu= optimizer=true batch=1 sequence= models=philschmid/MiniLM-L6-H384-uncased-sst2
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -i 1 -v -b 0 --overwrite -f fusion.csv -c ./cache_models --onnx_dir ./onnx_models -o
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -i 1
+python -m onnxruntime.transformers.benchmark -e torchscript -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -i 1 -v -b 0 --overwrite -f fusion.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8 -i 1
+python -m onnxruntime.transformers.benchmark -e torchscript -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8
+echo ort=true torch=false torchscript=true tensorflow=false gpu_fp32=false gpu_fp16=false cpu= optimizer=true batch=1 sequence= models=philschmid/MiniLM-L6-H384-uncased-sst2
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -i 1 -v -b 0 --overwrite -f fusion.csv -c ./cache_models --onnx_dir ./onnx_models -o
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -i 1
+python -m onnxruntime.transformers.benchmark -e torchscript -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -i 1 -v -b 0 --overwrite -f fusion.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8 -i 1
+python -m onnxruntime.transformers.benchmark -e torchscript -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8
+echo ort=true torch=false torchscript=true tensorflow=false gpu_fp32=false gpu_fp16=false cpu= optimizer=true batch=1 sequence= models=philschmid/MiniLM-L6-H384-uncased-sst2
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -i 1 -v -b 0 --overwrite -f fusion.csv -c ./cache_models --onnx_dir ./onnx_models -o
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -i 1
+python -m onnxruntime.transformers.benchmark -e torchscript -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -i 1 -v -b 0 --overwrite -f fusion.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8 -i 1
+python -m onnxruntime.transformers.benchmark -e torchscript -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 100 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -p int8
+echo ort=true torch=false torchscript=true tensorflow=false gpu_fp32=true gpu_fp16=true cpu= optimizer=true batch=1 sequence= models=philschmid/MiniLM-L6-H384-uncased-sst2
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -i 1 -v -b 0 --overwrite -f fusion.csv -c ./cache_models --onnx_dir ./onnx_models -o -g
+python -m onnxruntime.transformers.benchmark -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 1000 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -g -i 1
+python -m onnxruntime.transformers.benchmark -e torchscript -m philschmid/MiniLM-L6-H384-uncased-sst2 -b 1 -s 16 128 -t 1000 -f fusion.csv -r result.csv -d detail.csv -c ./cache_models --onnx_dir ./onnx_models -o -g

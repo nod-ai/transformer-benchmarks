@@ -1,0 +1,5 @@
+model_filename,datetime,transformers,torch,EmbedLayerNormalization,Attention,Gelu,FastGelu,BiasGelu,LayerNormalization,SkipLayerNormalization
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_cpu.onnx,2021-10-04 03:50:24.257021,4.11.2,1.9.0+cpu,1,6,0,0,6,0,12
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx,2021-10-04 03:50:43.020711,4.11.2,1.9.0+cpu,0,6,0,0,6,1,12
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_cpu.onnx,2021-10-04 04:34:02.831263,4.11.2,1.11.0.dev20211003+cpu,1,6,0,0,6,0,12
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx,2021-10-04 04:34:22.689454,4.11.2,1.11.0.dev20211003+cpu,0,6,0,0,6,1,12
