@@ -84,21 +84,7 @@ Run the Benchmark script in this folder. Change the parameters to GPU if you are
 
 ```
 ./hf.co_1ms/run_benchmark.sh
-
-Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]
-{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.INT8: 'int8'>, 'io_binding': True, 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-04 03:50:45.708862', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '1.36', 'latency_95_percentile': '1.41', 'latency_99_percentile': '1.77', 'average_latency_ms': '1.24', 'QPS': '805.29'}
-Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]
-{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.INT8: 'int8'>, 'io_binding': True, 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-04 03:50:45.837148', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '7.62', 'latency_95_percentile': '7.70', 'latency_99_percentile': '7.75', 'average_latency_ms': '7.48', 'QPS': '133.75'}
-Detail results are saved to csv file: detail.csv
-Summary results are saved to csv file: result.csv
-Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['torchscript'], cache_dir='./cache_models', onnx_dir='./onnx_models', use_gpu=False, precision=<Precision.INT8: 'int8'>, verbose=False, overwrite=False, optimize_onnx=True, validate_onnx=False, fusion_csv='fusion.csv', detail_csv='detail.csv', result_csv='result.csv', input_counts=[1], test_times=100, batch_sizes=[1], sequence_lengths=[16, 128], disable_ort_io_binding=False, num_threads=[2])
-Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.bias', 'classifier.weight']
-- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
-- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
-Size of full precision Torch model(MB):86.6843729019165
-Size of quantized Torch model(MB):55.913846015930176
-Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]
-{'engine': 'torchscript', 'version': '1.9.0+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.INT8: 'int8'>, 'io_binding': '', 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-04 03:50:50.498982', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '2.02', 'latency_95_percentile': '2.04', 'latency_99_percentile': '2.14', 'average_latency_ms': '1.96', 'QPS': '509.34'}
+...
 Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]
 {'engine': 'torchscript', 'version': '1.9.0+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.INT8: 'int8'>, 'io_binding': '', 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-04 03:50:52.568732', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '9.79', 'latency_95_percentile': '9.84', 'latency_99_percentile': '9.94', 'average_latency_ms': '9.59', 'QPS': '104.32'}
 ```
