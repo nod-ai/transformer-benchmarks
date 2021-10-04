@@ -22,3 +22,15 @@ onnxruntime,1.10.0,cpu,int8,True,True,philschmid/MiniLM-L6-H384-uncased-sst2,1,2
 engine,version,device,precision,optimizer,io_binding,model_name,inputs,threads,batch_size,sequence_length,datetime,test_times,QPS,average_latency_ms,latency_variance,latency_90_percentile,latency_95_percentile,latency_99_percentile
 torchscript,1.11.0.dev20211003+cpu,cpu,int8,,,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,16,2021-10-04 04:34:30.947950,100,402.31,2.49,0.00,2.52,2.53,2.75
 torchscript,1.11.0.dev20211003+cpu,cpu,int8,,,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,128,2021-10-04 04:34:33.658199,100,85.68,11.67,0.00,11.81,11.92,12.11
+engine,version,device,precision,optimizer,io_binding,model_name,inputs,threads,batch_size,sequence_length,datetime,test_times,QPS,average_latency_ms,latency_variance,latency_90_percentile,latency_95_percentile,latency_99_percentile
+onnxruntime,1.10.0,cuda,fp32,True,True,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,16,2021-10-04 05:30:04.821624,1000,1231.85,0.81,0.00,0.83,0.84,0.88
+onnxruntime,1.10.0,cuda,fp32,True,True,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,128,2021-10-04 05:30:05.648448,1000,1197.71,0.83,0.00,0.85,0.85,0.90
+engine,version,device,precision,optimizer,io_binding,model_name,inputs,threads,batch_size,sequence_length,datetime,test_times,QPS,average_latency_ms,latency_variance,latency_90_percentile,latency_95_percentile,latency_99_percentile
+torchscript,1.11.0.dev20211003+cu111,cuda,fp32,,,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,16,2021-10-04 05:30:19.976177,1000,322.43,3.10,0.00,3.12,3.14,3.33
+torchscript,1.11.0.dev20211003+cu111,cuda,fp32,,,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,128,2021-10-04 05:30:25.230227,1000,281.58,3.55,0.00,3.57,3.59,3.73
+engine,version,device,precision,optimizer,io_binding,model_name,inputs,threads,batch_size,sequence_length,datetime,test_times,QPS,average_latency_ms,latency_variance,latency_90_percentile,latency_95_percentile,latency_99_percentile
+onnxruntime,1.10.0,cuda,fp16,True,True,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,16,2021-10-04 05:30:55.521173,1000,1357.36,0.74,0.00,0.75,0.76,0.79
+onnxruntime,1.10.0,cuda,fp16,True,True,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,128,2021-10-04 05:30:56.270584,1000,1026.73,0.97,0.00,0.99,1.01,1.07
+engine,version,device,precision,optimizer,io_binding,model_name,inputs,threads,batch_size,sequence_length,datetime,test_times,QPS,average_latency_ms,latency_variance,latency_90_percentile,latency_95_percentile,latency_99_percentile
+torchscript,1.11.0.dev20211003+cu111,cuda,fp16,,,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,16,2021-10-04 05:31:10.413587,1000,360.63,2.77,0.00,2.80,2.83,2.96
+torchscript,1.11.0.dev20211003+cu111,cuda,fp16,,,philschmid/MiniLM-L6-H384-uncased-sst2,1,2,1,128,2021-10-04 05:31:15.078604,1000,338.01,2.96,0.00,3.00,3.03,3.23

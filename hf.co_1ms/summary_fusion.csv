@@ -3,3 +3,7 @@ model_filename,datetime,transformers,torch,EmbedLayerNormalization,Attention,Gel
 ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx,2021-10-04 03:50:43.020711,4.11.2,1.9.0+cpu,0,6,0,0,6,1,12
 ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_cpu.onnx,2021-10-04 04:34:02.831263,4.11.2,1.11.0.dev20211003+cpu,1,6,0,0,6,0,12
 ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx,2021-10-04 04:34:22.689454,4.11.2,1.11.0.dev20211003+cpu,0,6,0,0,6,1,12
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_gpu.onnx,2021-10-04 05:22:26.404124,4.11.2,1.11.0.dev20211003+cpu,1,6,0,0,6,0,12
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp16_gpu.onnx,2021-10-04 05:22:49.040808,4.11.2,1.11.0.dev20211003+cpu,1,6,0,6,0,0,12
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_gpu.onnx,2021-10-04 05:29:54.038759,4.11.2,1.11.0.dev20211003+cu111,1,6,0,0,6,0,12
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp16_gpu.onnx,2021-10-04 05:30:44.705058,4.11.2,1.11.0.dev20211003+cu111,1,6,0,6,0,0,12

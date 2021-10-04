@@ -14,3 +14,11 @@ model_name,inputs,engine,version,device,precision,optimizer,io_binding,threads,b
 philschmid/MiniLM-L6-H384-uncased-sst2,1,onnxruntime,1.10.0,cpu,int8,True,True,2,1.24,7.68
 model_name,inputs,engine,version,device,precision,optimizer,io_binding,threads,b1_s16,b1_s128
 philschmid/MiniLM-L6-H384-uncased-sst2,1,torchscript,1.11.0.dev20211003+cpu,cpu,int8,,,2,2.49,11.67
+model_name,inputs,engine,version,device,precision,optimizer,io_binding,threads,b1_s16,b1_s128
+philschmid/MiniLM-L6-H384-uncased-sst2,1,onnxruntime,1.10.0,cuda,fp32,True,True,2,0.81,0.83
+model_name,inputs,engine,version,device,precision,optimizer,io_binding,threads,b1_s16,b1_s128
+philschmid/MiniLM-L6-H384-uncased-sst2,1,torchscript,1.11.0.dev20211003+cu111,cuda,fp32,,,2,3.10,3.55
+model_name,inputs,engine,version,device,precision,optimizer,io_binding,threads,b1_s16,b1_s128
+philschmid/MiniLM-L6-H384-uncased-sst2,1,onnxruntime,1.10.0,cuda,fp16,True,True,2,0.74,0.97
+model_name,inputs,engine,version,device,precision,optimizer,io_binding,threads,b1_s16,b1_s128
+philschmid/MiniLM-L6-H384-uncased-sst2,1,torchscript,1.11.0.dev20211003+cu111,cuda,fp16,,,2,2.77,2.96
