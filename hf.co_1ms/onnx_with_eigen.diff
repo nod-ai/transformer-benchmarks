@@ -1,0 +1,78 @@
+diff --git a/.gitmodules b/.gitmodules
+index 5c2838373..cae75f4b7 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -24,7 +24,7 @@
+ 	url = https://github.com/google/re2.git
+ [submodule "cmake/external/eigen"]
+ 	path = cmake/external/eigen
+-	url = https://gitlab.com/libeigen/eigen.git
++	url = https://gitlab.com/cantonios/eigen.git
+ [submodule "cmake/external/cxxopts"]
+ 	path = cmake/external/cxxopts
+ 	url = https://github.com/jarro2783/cxxopts.git
+diff --git a/cgmanifests/submodules/cgmanifest.json b/cgmanifests/submodules/cgmanifest.json
+index 41c43a6ff..1388141ca 100644
+--- a/cgmanifests/submodules/cgmanifest.json
++++ b/cgmanifests/submodules/cgmanifest.json
+@@ -115,7 +115,7 @@
+         "type": "git",
+         "git": {
+           "commitHash": "efd9867ff0e8df23016ac6c9828d0d7bf8bec1b1",
+-          "repositoryUrl": "https://gitlab.com/libeigen/eigen.git"
++          "repositoryUrl": "https://gitlab.com/cantonios/eigen.git"
+         },
+         "comments": "git submodule at cmake/external/FeaturizersLibrary/src/3rdParty/eigen"
+       }
+@@ -195,7 +195,7 @@
+         "type": "git",
+         "git": {
+           "commitHash": "d10b27fe37736d2944630ecd7557cefa95cf87c9",
+-          "repositoryUrl": "https://gitlab.com/libeigen/eigen.git"
++          "repositoryUrl": "https://gitlab.com/cantonios/eigen.git"
+         },
+         "comments": "git submodule at cmake/external/eigen"
+       }
+diff --git a/cmake/external/FeaturizersLibrary b/cmake/external/FeaturizersLibrary
+--- a/cmake/external/FeaturizersLibrary
++++ b/cmake/external/FeaturizersLibrary
+@@ -1 +1 @@
+-Subproject commit fd5fe3de507d4a19f5923c5d4c267e3d730500a9
++Subproject commit fd5fe3de507d4a19f5923c5d4c267e3d730500a9-dirty
+diff --git a/cmake/external/eigen b/cmake/external/eigen
+--- a/cmake/external/eigen
++++ b/cmake/external/eigen
+@@ -1 +1 @@
+-Subproject commit d10b27fe37736d2944630ecd7557cefa95cf87c9
++Subproject commit d10b27fe37736d2944630ecd7557cefa95cf87c9-dirty
+diff --git a/cmake/external/onnx b/cmake/external/onnx
+--- a/cmake/external/onnx
++++ b/cmake/external/onnx
+@@ -1 +1 @@
+-Subproject commit 1f63dcb7fcc3a8bf5c3c8e326867ecd6f5c43f35
++Subproject commit 1f63dcb7fcc3a8bf5c3c8e326867ecd6f5c43f35-dirty
+diff --git a/onnxruntime/python/tools/transformers/benchmark.py b/onnxruntime/python/tools/transformers/benchmark.py
+index 6e5d5b98e..a9f0e3a93 100644
+--- a/onnxruntime/python/tools/transformers/benchmark.py
++++ b/onnxruntime/python/tools/transformers/benchmark.py
+@@ -483,7 +483,7 @@ def parse_arguments():
+                         help='Disable running ONNX Runtime with binded inputs and outputs. ')
+     parser.set_defaults(disable_ort_io_binding=False)
+ 
+-    parser.add_argument("-n", "--num_threads", required=False, nargs="+", type=int, default=[0], help="Threads to use")
++    parser.add_argument("-n", "--num_threads", required=False, nargs="+", type=int, default=[2], help="Threads to use")
+ 
+     args = parser.parse_args()
+     return args
+diff --git a/onnxruntime/python/tools/transformers/huggingface_models.py b/onnxruntime/python/tools/transformers/huggingface_models.py
+index 051480ebb..31bd05b87 100644
+--- a/onnxruntime/python/tools/transformers/huggingface_models.py
++++ b/onnxruntime/python/tools/transformers/huggingface_models.py
+@@ -16,6 +16,7 @@ MODELS = {
+     "bert-base-uncased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     "bert-large-uncased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     "bert-base-cased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
++    "philschmid/MiniLM-L6-H384-uncased-sst2": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     # "bert-large-cased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     # "bert-base-multilingual-uncased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     # "bert-base-multilingual-cased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),

@@ -1,0 +1,25 @@
+diff --git a/onnxruntime/python/tools/transformers/benchmark.py b/onnxruntime/python/tools/transformers/benchmark.py
+index 6e5d5b98e..a9f0e3a93 100644
+--- a/onnxruntime/python/tools/transformers/benchmark.py
++++ b/onnxruntime/python/tools/transformers/benchmark.py
+@@ -483,7 +483,7 @@ def parse_arguments():
+                         help='Disable running ONNX Runtime with binded inputs and outputs. ')
+     parser.set_defaults(disable_ort_io_binding=False)
+ 
+-    parser.add_argument("-n", "--num_threads", required=False, nargs="+", type=int, default=[0], help="Threads to use")
++    parser.add_argument("-n", "--num_threads", required=False, nargs="+", type=int, default=[2], help="Threads to use")
+ 
+     args = parser.parse_args()
+     return args
+diff --git a/onnxruntime/python/tools/transformers/huggingface_models.py b/onnxruntime/python/tools/transformers/huggingface_models.py
+index 051480ebb..31bd05b87 100644
+--- a/onnxruntime/python/tools/transformers/huggingface_models.py
++++ b/onnxruntime/python/tools/transformers/huggingface_models.py
+@@ -16,6 +16,7 @@ MODELS = {
+     "bert-base-uncased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     "bert-large-uncased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     "bert-base-cased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
++    "philschmid/MiniLM-L6-H384-uncased-sst2": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     # "bert-large-cased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     # "bert-base-multilingual-uncased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),
+     # "bert-base-multilingual-cased": (["input_ids", "attention_mask", "token_type_ids"], 12, False, "bert"),

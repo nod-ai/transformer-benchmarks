@@ -1,0 +1,192 @@
+Sample output from Google Cloud Cascade Lake CPUs
+
+
+
+quantized model saved to:./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx                                                                            
+Size of quantized ONNX model(MB):22.205775260925293                                                                                
+Finished quantizing model: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx                                                                          
+Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]                                                                                      
+{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.INT8: 'int8'>, 'io_binding': True, 'model_name': 'philschmid/M
+iniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-03 23:53:09.711947', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '1.29', 'latency_95_percentile': '1.33', 'latency_99_percentile': '1.50', 'average_latency_ms': '1.25', 'QPS': '799.31'}   
+Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]                                                                                  
+{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.INT8: 'int8'>, 'io_binding': True, 'model_name': 'philschmid/M
+iniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-03 23:53:09.841465', 'test_times': 100, 'latency_va
+riance': '0.00', 'latency_90_percentile': '7.68', 'latency_95_percentile': '7.72', 'latency_99_percentile': '8.47', 'average_latency_ms': '7.60', 'QPS': '131.66'}      
+Detail results are saved to csv file: detail.csv                                                                 
+Summary results are saved to csv file: result.csv                                                                                                                        Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['torchscript'], cache_dir='./cache_models', onnx_di
+r='./onnx_models', use_gpu=False, precision=<Precision.INT8: 'int8'>, verbose=False, overwrite=False, optimize_onnx=True, validate_onnx=False, fusion_csv='fusion.csv', d
+etail_csv='detail.csv', result_csv='result.csv', input_counts=[1], test_times=100, batch_sizes=[1], sequence_lengths=[16, 128], disable_ort_io_binding=False, num_threads
+=[2])                                                                                                       
+Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.bias', 'classifier.weight']      
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequ
+enceClassification model from a BertForPreTraining model).                                                              
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassifica
+tion model from a BertForSequenceClassification model).                                                                                                                 
+Size of full precision Torch model(MB):86.6843729019165                                                                                                                 
+Size of quantized Torch model(MB):55.914700508117676                                                                                                                     
+Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]                                                                                           
+{'engine': 'torchscript', 'version': '1.11.0.dev20211003+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.INT8: 'int8'>, 'io_binding': '', 'model_name': '
+philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-03 23:53:15.226641', 'test_times': 100, 
+'latency_variance': '0.00', 'latency_90_percentile': '2.97', 'latency_95_percentile': '3.00', 'latency_99_percentile': '3.07', 'average_latency_ms': '2.88', 'QPS': '347.
+30'}                                                                                                                                                                     
+Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]                                                                                          
+{'engine': 'torchscript', 'version': '1.11.0.dev20211003+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.INT8: 'int8'>, 'io_binding': '', 'model_name': '
+philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-03 23:53:17.990640', 'test_times': 100,
+ 'latency_variance': '0.00', 'latency_90_percentile': '12.03', 'latency_95_percentile': '12.12', 'latency_99_percentile': '12.31', 'average_latency_ms': '11.85', 'QPS':
+'84.38'}                                                                                                                                                          
+Detail results are saved to csv file: detail.csv                                                                                                           
+Summary results are saved to csv file: result.csv        
+
+
+
+(dnnlenv) anush@anush-bench:~$ ~/run_benchmark.sh 
+Use onnxruntime.transformers.benchmark
+Run CPU Benchmark on model philschmid/MiniLM-L6-H384-uncased-sst2
+Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['onnxruntime'], cache_dir='./cache_models', onnx_dir='./onnx_models', use_gpu=False, precision=<Precision.FLOAT32: 'fp32'>, verbose=False, overwrite=True, optimize_onnx=True, validate_onnx=True, fusion_csv='fusion.csv', detail_csv=None, result_csv=None, input_counts=[1], test_times=100, batch_sizes=[0], sequence_lengths=[4, 8, 16, 32, 64, 128, 256], disable_ort_io_binding=False, num_threads=[2])
+Downloading: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 710/710 [00:00<00:00, 1.17MB/s]
+Downloading: 100%|███████████████████████████████████████████████████████████████████████████████████████████████â██████████████████| 86.7M/86.7M [00:05<00:00, 17.5MB/s]
+Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.bias', 'classifier.weight']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Downloading: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 512/512 [00:00<00:00, 797kB/s]
+Downloading: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 226k/226k [00:00<00:00, 1.93MB/s]
+Downloading: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 455k/455k [00:00<00:00, 4.13MB/s]
+Downloading: 100%|██████████████████████████████████â████████████████████████████████████████████████████████████████████████████████████| 112/112 [00:00<00:00, 134kB/s]
+Exporting ONNX model to ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx is a valid ONNX model
+inference result of onnxruntime is validated on ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx
+Removed 1 Cast nodes with output type same as input
+Fused LayerNormalization count: 13
+Fused Gelu count: 6
+Fused SkipLayerNormalization count: 12
+Fused Attention count: 6
+Graph pruned: 0 inputs, 0 outputs and 36 nodes are removed
+Fused Shape count: 1
+Graph pruned: 0 inputs, 0 outputs and 3 nodes are removed
+Fused EmbedLayerNormalization(with mask) count: 1
+Graph pruned: 0 inputs, 0 outputs and 14 nodes are removed
+Remove reshape node Reshape_20 since its input shape is same as output: [2]
+Graph pruned: 0 inputs, 0 outputs and 8 nodes are removed
+Fused BiasGelu count: 6
+Fused SkipLayerNormalization(add bias) count: 12
+opset verion: 12
+Optimized operators:{'EmbedLayerNormalization': 1, 'Attention': 6, 'Gelu': 0, 'FastGelu': 0, 'BiasGelu': 6, 'LayerNormalization': 0, 'SkipLayerNormalization': 12}
+Sort graphs in topological order
+Model saved to ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_cpu.onnx
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_cpu.onnx is a valid ONNX model
+inference result of onnxruntime is validated on ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_cpu.onnx
+Fusion statistics is saved to csv file: fusion.csv
+Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['onnxruntime'], cache_dir='./cache_models', onnx_dir='./onnx_models', use_gpu=False, precision=<Precision.FLOAT32: 'fp32'>, verbose=False, overwrite=False, optimize_onnx=True, validate_onnx=False, fusion_csv='fusion.csv', detail_csv='detail.csv', result_csv='result.csv', input_counts=[1], test_times=100, batch_sizes=[1], sequence_lengths=[16, 128], disable_ort_io_binding=False, num_threads=[2])
+Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.weight', 'classifier.bias']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Skip export since model existed: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx
+Skip optimization since model existed: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_cpu.onnx
+Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]
+{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.FLOAT32: 'fp32'>, 'io_binding': True, 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-04 00:31:05.869002', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '2.82', 'latency_95_percentile': '2.89', 'latency_99_percentile': '2.96', 'average_latency_ms': '2.71', 'QPS': '368.57'}
+Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]
+{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.FLOAT32: 'fp32'>, 'io_binding': True, 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-04 00:31:06.146289', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '13.72', 'latency_95_percentile': '13.92', 'latency_99_percentile': '14.44', 'average_latency_ms': '13.57', 'QPS': '73.67'}
+Detail results are saved to csv file: detail.csv
+Summary results are saved to csv file: result.csv
+Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['torchscript'], cache_dir='./cache_models', onnx_dir='./onnx_models', use_gpu=False, precision=<Precision.FLOAT32: 'fp32'>, verbose=False, overwrite=False, optimize_onnx=True, validate_onnx=False, fusion_csv='fusion.csv', detail_csv='detail.csv', result_csv='result.csv', input_counts=[1], test_times=100, batch_sizes=[1], sequence_lengths=[16, 128], disable_ort_io_binding=False, num_threads=[2])
+Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.weight', 'classifier.bias']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]
+{'engine': 'torchscript', 'version': '1.9.0+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.FLOAT32: 'fp32'>, 'io_binding': '', 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-04 00:31:11.134975', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '5.95', 'latency_95_percentile': '6.06', 'latency_99_percentile': '6.77', 'average_latency_ms': '5.88', 'QPS': '170.14'}
+Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]
+{'engine': 'torchscript', 'version': '1.9.0+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.FLOAT32: 'fp32'>, 'io_binding': '', 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-04 00:31:13.701539', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '19.61', 'latency_95_percentile': '20.06', 'latency_99_percentile': '21.96', 'average_latency_ms': '18.44', 'QPS': '54.22'}
+Detail results are saved to csv file: detail.csv
+Summary results are saved to csv file: result.csv
+Run CPU Benchmark on model philschmid/MiniLM-L6-H384-uncased-sst2
+Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['onnxruntime'], cache_dir='./cache_models', onnx_dir='./onnx_models', use_gpu=False, precision=<Precision.INT8: 'int8'>, verbose=False, overwrite=True, optimize_onnx=True, validate_onnx=True, fusion_csv='fusion.csv', detail_csv=None, result_csv=None, input_counts=[1], test_times=100, batch_sizes=[0], sequence_lengths=[4, 8, 16, 32, 64, 128, 256], disable_ort_io_binding=False, num_threads=[2])
+Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.bias', 'classifier.weight']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Exporting ONNX model to ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx is a valid ONNX model
+inference result of onnxruntime is validated on ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx
+Removed 1 Cast nodes with output type same as input
+Fused LayerNormalization count: 13
+Fused Gelu count: 6
+Fused SkipLayerNormalization count: 12
+Fused Attention count: 6
+Graph pruned: 0 inputs, 0 outputs and 36 nodes are removed
+Fused Shape count: 1
+Graph pruned: 0 inputs, 0 outputs and 3 nodes are removed
+Remove reshape node Reshape_20 since its input shape is same as output: [2]
+Graph pruned: 0 inputs, 0 outputs and 8 nodes are removed
+Fused BiasGelu count: 6
+Fused SkipLayerNormalization(add bias) count: 12
+opset verion: 12
+Optimized operators:{'EmbedLayerNormalization': 0, 'Attention': 6, 'Gelu': 0, 'FastGelu': 0, 'BiasGelu': 6, 'LayerNormalization': 1, 'SkipLayerNormalization': 12}
+Sort graphs in topological order
+Model saved to ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx is a valid ONNX model
+inference result of onnxruntime is validated on ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Quantizing model: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Size of full precision ONNX model(MB):86.66172885894775
+onnxruntime.quantization.quantize is deprecated.
+         Please use quantize_static for static quantization, quantize_dynamic for dynamic quantization.
+Warning: Unsupported operator LayerNormalization. No schema registered for this operator.
+Quantization parameters for tensor:"171" not specified
+Quantization parameters for tensor:"244" not specified
+Quantization parameters for tensor:"259" not specified
+Quantization parameters for tensor:"270" not specified
+Quantization parameters for tensor:"285" not specified
+Quantization parameters for tensor:"358" not specified
+Quantization parameters for tensor:"373" not specified
+Quantization parameters for tensor:"384" not specified
+Quantization parameters for tensor:"399" not specified
+Quantization parameters for tensor:"472" not specified
+Quantization parameters for tensor:"487" not specified
+Quantization parameters for tensor:"498" not specified
+Quantization parameters for tensor:"513" not specified
+Quantization parameters for tensor:"586" not specified
+Quantization parameters for tensor:"601" not specified
+Quantization parameters for tensor:"612" not specified
+Quantization parameters for tensor:"627" not specified
+Quantization parameters for tensor:"700" not specified
+Quantization parameters for tensor:"715" not specified
+Quantization parameters for tensor:"726" not specified
+Quantization parameters for tensor:"741" not specified
+Quantization parameters for tensor:"814" not specified
+Quantization parameters for tensor:"829" not specified
+Quantization parameters for tensor:"840" not specified
+quantized model saved to:./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Size of quantized ONNX model(MB):22.20188331604004
+Finished quantizing model: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Fusion statistics is saved to csv file: fusion.csv
+Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['onnxruntime'], cache_dir='./cache_models', onnx_dir='./onnx_models', use_gpu=False, precision=<Precision.INT8: 'int8'>, verbose=False, overwrite=False, optimize_onnx=True, validate_onnx=False, fusion_csv='fusion.csv', detail_csv='detail.csv', result_csv='result.csv', input_counts=[1], test_times=100, batch_sizes=[1], sequence_lengths=[16, 128], disable_ort_io_binding=False, num_threads=[2])
+Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.weight', 'classifier.bias']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Skip export since model existed: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1.onnx
+Skip optimization since model existed: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Quantizing model: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Size of full precision ONNX model(MB):22.20188331604004
+onnxruntime.quantization.quantize is deprecated.
+         Please use quantize_static for static quantization, quantize_dynamic for dynamic quantization.
+Warning: Unsupported operator LayerNormalization. No schema registered for this operator.
+quantized model saved to:./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Size of quantized ONNX model(MB):22.205744743347168
+Finished quantizing model: ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_int8_cpu.onnx
+Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]
+{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.INT8: 'int8'>, 'io_binding': True, 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-04 00:31:25.051464', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '1.34', 'latency_95_percentile': '1.37', 'latency_99_percentile': '1.53', 'average_latency_ms': '1.29', 'QPS': '776.40'}
+Run onnxruntime on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]
+{'engine': 'onnxruntime', 'version': '1.10.0', 'device': 'cpu', 'optimizer': True, 'precision': <Precision.INT8: 'int8'>, 'io_binding': True, 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-04 00:31:25.184631', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '7.99', 'latency_95_percentile': '8.06', 'latency_99_percentile': '8.38', 'average_latency_ms': '7.77', 'QPS': '128.65'}
+Detail results are saved to csv file: detail.csv
+Summary results are saved to csv file: result.csv
+Arguments: Namespace(models=['philschmid/MiniLM-L6-H384-uncased-sst2'], model_source='pt', model_class=None, engines=['torchscript'], cache_dir='./cache_models', onnx_dir='./onnx_models', use_gpu=False, precision=<Precision.INT8: 'int8'>, verbose=False, overwrite=False, optimize_onnx=True, validate_onnx=False, fusion_csv='fusion.csv', detail_csv='detail.csv', result_csv='result.csv', input_counts=[1], test_times=100, batch_sizes=[1], sequence_lengths=[16, 128], disable_ort_io_binding=False, num_threads=[2])
+Some weights of the model checkpoint at philschmid/MiniLM-L6-H384-uncased-sst2 were not used when initializing BertModel: ['classifier.weight', 'classifier.bias']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Size of full precision Torch model(MB):86.6843729019165
+Size of quantized Torch model(MB):55.913846015930176
+Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 16]
+{'engine': 'torchscript', 'version': '1.9.0+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.INT8: 'int8'>, 'io_binding': '', 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 16, 'datetime': '2021-10-04 00:31:30.031711', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '2.28', 'latency_95_percentile': '2.31', 'latency_99_percentile': '2.32', 'average_latency_ms': '2.08', 'QPS': '479.64'}
+Run PyTorch on philschmid/MiniLM-L6-H384-uncased-sst2 with input shape [1, 128]
+{'engine': 'torchscript', 'version': '1.9.0+cpu', 'device': 'cpu', 'optimizer': '', 'precision': <Precision.INT8: 'int8'>, 'io_binding': '', 'model_name': 'philschmid/MiniLM-L6-H384-uncased-sst2', 'inputs': 1, 'threads': 2, 'batch_size': 1, 'sequence_length': 128, 'datetime': '2021-10-04 00:31:32.104266', 'test_times': 100, 'latency_variance': '0.00', 'latency_90_percentile': '9.68', 'latency_95_percentile': '9.81', 'latency_99_percentile': '9.85', 'average_latency_ms': '9.47', 'QPS': '105.59'}
+Detail results are saved to csv file: detail.csv
+Summary results are saved to csv file: result.csv
+
