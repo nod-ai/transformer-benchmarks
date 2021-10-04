@@ -35,6 +35,7 @@ pip install --upgrade onnx coloredlogs packaging psutil py3nvml onnxconverter_co
 
 # This is the compare regular PyTorch / Torchscript performance
 # To install Intel's Pytorch enahcements -- you will recreate the "1ms" demos with this at 9.8ms
+# uninstall with pip uninstall torch torch-ipex
 pip install torch_ipex==1.9.0 -f https://software.intel.com/ipex-whl-stable
 
 # To install stock Pytorch nighty -- you will run a couple ms slower at 11ms
@@ -64,10 +65,10 @@ Run the Benchmark script in this folder. Change the parameters to GPU if you are
 
 ## CPU Benchmark Results
 
-| Seq.Len |  Nightly Torchscript (FP32) | Nightly Torchscript (INT8) | Intel Torchscript (FP32) | Intel TS (Int8) | ONNX (FP32) | ONNX (Int8) |
+| Seq.Len |  1.11-dev Torchscript (FP32) | 1.11-dev Torchscript (INT8) | Intel 1.9.0 Torchscript (FP32) | Intel 1.9.0 Torchscript (Int8) | ONNX (FP32) | ONNX (Int8) |
 |---------| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-| 16 |||5.86|1.96|2.76|1.24|
-| 128 |||16.65|9.59|13.63|7.48|
+| 16 |6.14|2.49|5.86|1.96|2.76|1.24|
+| 128 |17.39|11.67|16.65|9.59|13.63|7.48|
 
 ## GPU Benchmark Results
 
