@@ -7,3 +7,15 @@ model_filename,datetime,transformers,torch,EmbedLayerNormalization,Attention,Gel
 ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp16_gpu.onnx,2021-10-04 05:22:49.040808,4.11.2,1.11.0.dev20211003+cpu,1,6,0,6,0,0,12
 ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp32_gpu.onnx,2021-10-04 05:29:54.038759,4.11.2,1.11.0.dev20211003+cu111,1,6,0,0,6,0,12
 ./onnx_models/philschmid_MiniLM_L6_H384_uncased_sst2_1_fp16_gpu.onnx,2021-10-04 05:30:44.705058,4.11.2,1.11.0.dev20211003+cu111,1,6,0,6,0,0,12
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_fp32_gpu.onnx,2021-10-05 06:12:25.602878,4.11.2,1.11.0.dev20211003+cu111,1,12,0,0,12,0,24
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_fp32_cpu.onnx,2021-10-05 06:13:58.767952,4.11.2,1.11.0.dev20211003+cu111,1,12,0,0,12,0,24
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_int8_cpu.onnx,2021-10-05 06:14:37.706671,4.11.2,1.11.0.dev20211003+cu111,0,12,0,0,12,1,24
+./onnx_models/bert_large_uncased_1_fp32_cpu.onnx,2021-10-05 06:18:24.971957,4.11.2,1.11.0.dev20211003+cu111,1,24,0,0,24,0,48
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_fp32_cpu.onnx,2021-10-05 06:21:34.252637,4.11.2,1.11.0.dev20211003+cu111,1,12,0,0,12,0,24
+./onnx_models/bert_large_uncased_1_int8_cpu.onnx,2021-10-05 06:23:53.876515,4.11.2,1.11.0.dev20211003+cu111,0,24,0,0,24,1,48
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_int8_cpu.onnx,2021-10-05 06:26:36.232346,4.11.2,1.11.0.dev20211003+cu111,0,12,0,0,12,1,24
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_fp32_cpu.onnx,2021-10-05 23:05:17.742694,4.11.2,1.11.0.dev20211003+cu111,1,12,0,0,12,0,24
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_fp32_cpu.onnx,2021-10-05 23:09:44.412182,4.11.2,1.11.0.dev20211003+cu111,1,12,0,0,12,0,24
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_fp32_cpu.onnx,2021-10-05 23:12:46.956941,4.11.2,1.11.0.dev20211003+cu111,1,12,0,0,12,0,24
+./onnx_models/microsoft_MiniLM_L12_H384_uncased_1_fp32_gpu.onnx,2021-10-05 23:15:17.325840,4.11.2,1.11.0.dev20211003+cu111,1,12,0,0,12,0,24
+./onnx_models/gpt2_1_fp32_gpu.onnx,2021-10-05 23:22:20.170049,4.11.2,1.11.0.dev20211003+cu111,0,0,0,12,0,25,0
