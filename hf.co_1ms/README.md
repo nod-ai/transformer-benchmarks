@@ -1,9 +1,9 @@
 
 ### Quick Summary - Use vendor supplied Pytorch and you will get the same performance as Infinity (as of 10/3/2021)
-Repackage OneDNN/DNNL on CPU and CUDNN for TensorRT/Tensorcore and you have Infinity without $20k/cpu/yr
+tl;dr: Repackage OneDNN/DNNL on CPU and CUDNN for TensorRT/Tensorcore and you have Infinity without $20k/cpu/yr
 
 
-Reconstruted Demos from launch Video here: https://www.youtube.com/watch?v=jiftCAhOYQA
+Reconstructed  Demos from launch Video here: https://www.youtube.com/watch?v=jiftCAhOYQA
 
 Infinity CPU Inference Dual-core Cascade lake VM:
 Seq length 16:  2.6ms
