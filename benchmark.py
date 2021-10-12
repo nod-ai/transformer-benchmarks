@@ -261,8 +261,14 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
     import time
     from transformers import BertModel, BertTokenizer, TFBertModel
 
-    MAX_SEQUENCE_LENGTH = 512
+    # TODO: Adjust run_mlir S.T it can run on multiple batch_szs and sequence_lens
+    MAX_SEQUENCE_LENGTH = sequence_lengths[0]
     BATCH_SIZE = 1
+
+    # Create a set of 2-dimensional inputs
+    bert_input = [tf.TensorSpec(shape=[BATCH_SIZE,MAX_SEQUENCE_LENGTH],dtype=tf.int32),
+            tf.TensorSpec(shape=[BATCH_SIZE,MAX_SEQUENCE_LENGTH], dtype=tf.int32),
+            tf.TensorSpec(shape=[BATCH_SIZE,MAX_SEQUENCE_LENGTH], dtype=tf.int32)]
 
     class BertModule(tf.Module):
         def __init__(self):
@@ -277,11 +283,6 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
         def predict(self, input_ids, attention_mask, token_type_ids):
             return self.m.predict(input_ids, attention_mask, token_type_ids)
 
-    # Create a set of 2-dimensional inputs
-    bert_input = [tf.TensorSpec(shape=[BATCH_SIZE,MAX_SEQUENCE_LENGTH],dtype=tf.int32),
-            tf.TensorSpec(shape=[BATCH_SIZE,MAX_SEQUENCE_LENGTH], dtype=tf.int32),
-            tf.TensorSpec(shape=[BATCH_SIZE,MAX_SEQUENCE_LENGTH], dtype=tf.int32)]
-
     # Prepping Data
     tokenizer = BertTokenizer.from_pretrained("microsoft/MiniLM-L12-H384-uncased")
     text = "Replace me by any text you'd like."
@@ -290,118 +291,51 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
         encoded_input[key] = tf.expand_dims(tf.convert_to_tensor(encoded_input[key]),0)
 
     # Compile the model using IREE
+    backend = "dylib-llvm-aot"
+    backend_config = "dylib"
+    if use_gpu:
+        backend = "cuda"
+        backend_config = "cuda"
+
     compiler_module = tfc.compile_module(BertModule(), exported_names = ["predict"], import_only=True)
-    flatbuffer_blob = compile_str(compiler_module, target_backends=["dylib-llvm-aot"])
+    flatbuffer_blob = compile_str(compiler_module, target_backends=[backend])
 
     # Save module as MLIR file in a directory
     vm_module = ireert.VmModule.from_flatbuffer(flatbuffer_blob)
     tracer = ireert.Tracer(os.getcwd())
-    config = ireert.Config("dylib",tracer)
+    # TODO: Remove printing of "Tracing module.predict"
+    config = ireert.Config(backend_config,tracer)
     ctx = ireert.SystemContext(config=config)
     ctx.add_vm_module(vm_module)
     BertCompiled = ctx.modules.module
     result = BertCompiled.predict(encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"])
     print(result)
     #end iree
-    tf.config.threading.set_intra_op_parallelism_threads(num_threads)
 
-    if not use_gpu:
-        tf.config.set_visible_devices([], 'GPU')
-
-    if use_gpu and not tf.test.is_built_with_cuda():
-        logger.error("Please install Tensorflow-gpu, and use a machine with GPU for testing gpu performance.")
-        return results
-
-    if use_gpu:  # Restrict TensorFlow to only use the first GPU
-        physical_devices = tf.config.list_physical_devices('GPU')
-        try:
-            tf.config.set_visible_devices(physical_devices[0], 'GPU')
-            tf.config.experimental.set_memory_growth(physical_devices[0], True)
-            tf.distribute.OneDeviceStrategy(device='/gpu:0')
-        except RuntimeError as e:
-            logger.exception(e)
-
-    if precision == Precision.FLOAT16 or precision == Precision.INT8:
-        raise NotImplementedError("Mixed precision is currently not supported.")
-
-    for model_name in model_names:
-        config = AutoConfig.from_pretrained(model_name, cache_dir=cache_dir)
-
-        model = load_pretrained_model(model_name,
-                                      config=config,
-                                      cache_dir=cache_dir,
-                                      custom_model_class=model_class,
-                                      is_tf_model=True)
-
-        tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
-
-        max_input_size = tokenizer.max_model_input_sizes[
-            model_name] if model_name in tokenizer.max_model_input_sizes else 1024
-
-        for batch_size in batch_sizes:
-            if batch_size <= 0:
-                continue
-
-            for sequence_length in sequence_lengths:
-                if max_input_size is not None and sequence_length > max_input_size:
-                    continue
-
-                logger.info("Run Tensorflow on {} with input shape {}".format(model_name,
-                                                                              [batch_size, sequence_length]))
-
-                import random
-                rng = random.Random()
-                values = [rng.randint(0, config.vocab_size - 1) for i in range(batch_size * sequence_length)]
-                input_ids = tf.constant(values, shape=(batch_size, sequence_length), dtype=tf.int32)
-
-                try:
-                    # Disable both for better inference perf
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
-                    def encoder_forward():
-                        return model(input_ids, training=False)
-
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
-                    def encoder_decoder_forward():
-                        return model(input_ids, decoder_input_ids=input_ids, training=False)
-
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
-                    def lxmert_forward():
-                        feats = tf.random.normal([1, 1, config.visual_feat_dim])
-                        pos = tf.random.normal([1, 1, config.visual_pos_dim])
-                        return model(input_ids, visual_feats=feats, visual_pos=pos, training=False)
-
-                    inference = encoder_forward
-                    if config.is_encoder_decoder:
-                        inference = encoder_decoder_forward
-                    elif isinstance(config, LxmertConfig):
-                        inference = lxmert_forward
-
-                    inference()
-
-                    runtimes = timeit.repeat(lambda: inference(), repeat=repeat_times, number=1)
-
-                    result = {
-                        "engine": "tensorflow",
-                        "version": tf.__version__,
-                        "device": "cuda" if use_gpu else "cpu",
-                        "optimizer": "",
-                        "precision": precision,
-                        "io_binding": "",
-                        "model_name": model_name,
-                        "inputs": 1,
-                        "threads": num_threads,
-                        "batch_size": batch_size,
-                        "sequence_length": sequence_length,
-                        "datetime": str(datetime.now()),
-                    }
-                    result.update(get_latency_result(runtimes, batch_size))
-                    logger.info(result)
-                    results.append(result)
-                except RuntimeError as e:
-                    logger.exception(e)
-                    from numba import cuda
-                    device = cuda.get_current_device()
-                    device.reset()
+    try:
+        runtimes = timeit.repeat(lambda: BertCompiled.predict(encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"]), repeat=repeat_times, number=1)
+        result = {
+            "engine": "MLIR",
+            "version": tf.__version__,
+            "device": "cuda" if use_gpu else "cpu",
+            "optimizer": "",
+            "precision": precision,
+            "io_binding": "",
+            "model_name": "microsoft/MiniLM-L12-H384-uncased",
+            "inputs": 1,
+            "threads": 1,
+            "batch_size": batch_sizes[0],
+            "sequence_length": sequence_lengths[0],
+            "datetime": str(datetime.now()),
+        }
+        result.update(get_latency_result(runtimes, batch_sizes[0]))
+        logger.info(result)
+        results.append(result)
+    except RuntimeError as e:
+        logger.exception(e)
+        from numba import cuda
+        device = cuda.get_current_device()
+        device.reset()
 
     return results
 
@@ -679,6 +613,7 @@ def main():
     enable_torchscript = "torchscript" in args.engines
     enable_onnxruntime = "onnxruntime" in args.engines
     enable_tensorflow = "tensorflow" in args.engines
+    enable_mlir = "mlir" in args.engines
 
     results = []
 
@@ -703,6 +638,11 @@ def main():
             results += run_tensorflow(args.use_gpu, args.models, args.model_class, args.precision, num_threads,
                                       args.batch_sizes, args.sequence_lengths, args.test_times, args.cache_dir,
                                       args.verbose)
+        if enable_mlir:
+            results += run_mlir(args.use_gpu, args.models, args.model_class, args.precision, num_threads,
+                            args.batch_sizes, args.sequence_lengths, args.test_times, args.cache_dir,
+                            args.verbose)
+
 
         model_fusion_statistics = {}
         if enable_onnxruntime:
