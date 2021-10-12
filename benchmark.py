@@ -302,9 +302,9 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
 
     # Save module as MLIR file in a directory
     vm_module = ireert.VmModule.from_flatbuffer(flatbuffer_blob)
-    tracer = ireert.Tracer(os.getcwd())
+    #tracer = ireert.Tracer(os.getcwd())
     # TODO: Remove printing of "Tracing module.predict"
-    config = ireert.Config(backend_config,tracer)
+    config = ireert.Config(backend_config)
     ctx = ireert.SystemContext(config=config)
     ctx.add_vm_module(vm_module)
     BertCompiled = ctx.modules.module
