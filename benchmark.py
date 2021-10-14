@@ -298,6 +298,7 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
         backend_config = "cuda"
 
     compiler_module = tfc.compile_module(BertModule(), exported_names = ["predict"], import_only=True)
+    #flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=["--iree-llvm-target-triple=x86_64-pc-linux-gnu --iree-llvm-target-cpu-features=host --print-ir-after=iree-set-num-workgroups"])
     flatbuffer_blob = compile_str(compiler_module, target_backends=[backend])
 
     # Save module as MLIR file in a directory
@@ -308,8 +309,16 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
     ctx = ireert.SystemContext(config=config)
     ctx.add_vm_module(vm_module)
     BertCompiled = ctx.modules.module
-    result = BertCompiled.predict(encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"])
-    print(result)
+
+    #Dump module
+    ARITFACTS_DIR = os.getcwd()
+    mlir_path = os.path.join(ARITFACTS_DIR, "model.mlir")
+    with open(mlir_path, "wt") as output_file:
+        output_file.write(compiler_module.decode('utf-8'))
+    print(f"Wrote MLIR to path '{mlir_path}'")
+
+    #result = BertCompiled.predict(encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"])
+    #print(result)
     #end iree
 
     try:
