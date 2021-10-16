@@ -298,8 +298,8 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
         backend_config = "cuda"
 
     compiler_module = tfc.compile_module(BertModule(), exported_names = ["predict"], import_only=True)
-    #flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=["--iree-llvm-target-triple=x86_64-pc-linux-gnu --iree-llvm-target-cpu-features=host --print-ir-after=iree-set-num-workgroups"])
-    flatbuffer_blob = compile_str(compiler_module, target_backends=[backend])
+    flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=["--iree-llvm-target-triple=x86_64-pc-linux-gnu", "--iree-llvm-target-cpu-features=host"])
+    #flatbuffer_blob = compile_str(compiler_module, target_backends=[backend])
 
     # Save module as MLIR file in a directory
     vm_module = ireert.VmModule.from_flatbuffer(flatbuffer_blob)
@@ -432,15 +432,15 @@ def run_tensorflow(use_gpu, model_names, model_class, precision, num_threads, ba
 
                 try:
                     # Disable both for better inference perf
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
+                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=True)
                     def encoder_forward():
                         return model(input_ids, training=False)
 
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
+                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=True)
                     def encoder_decoder_forward():
                         return model(input_ids, decoder_input_ids=input_ids, training=False)
 
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
+                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=True)
                     def lxmert_forward():
                         feats = tf.random.normal([1, 1, config.visual_feat_dim])
                         pos = tf.random.normal([1, 1, config.visual_pos_dim])
