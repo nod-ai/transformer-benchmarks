@@ -1,0 +1,11 @@
+__pycache__
+cache_models
+onnx_models
+benchmark.log
+model.mlir
+detail.csv
+fusion.csv
+result.csv
+summary_detail.csv
+summary_result.csv
+summary_fusion.csv
