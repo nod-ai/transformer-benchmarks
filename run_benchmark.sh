@@ -26,9 +26,9 @@ run_mlir=true
 export_onnx_from_tf=false
 
 # Devices to test (You can run either CPU or GPU, but not both: gpu need onnxruntime-gpu, and CPU need onnxruntime).
-run_gpu_fp32=true
+run_gpu_fp32=false
 run_gpu_fp16=false
-run_cpu_fp32=false
+run_cpu_fp32=true
 run_cpu_int8=false
 
 average_over=1000
@@ -88,6 +88,8 @@ if [ "$run_install" = true ] ; then
   pip uninstall --yes onnxruntime
   pip uninstall --yes onnxruntime-gpu
   pip uninstall --yes torch
+  pip uninstall --yes iree-compiler-snapshot iree-runtime-snapshot iree-tools-tf-snapshot iree-tools-tflite-snapshot iree-tools-xla-snapshot
+
   if [ "$run_cpu_fp32" = true ] || [ "$run_cpu_int8" = true ]; then
     pip install onnxruntime
     pip install --pre torch torchvision torchaudio -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
