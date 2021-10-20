@@ -25,6 +25,7 @@ else
   echo "Checking out transformer-benchmarks..."
   git clone https://github.com/powderluv/transformer-benchmarks --recursive
   cd transformer-benchmarks
+  git submodule update --init --recursive
 fi
 
 #E2E Transformer benchmarks
