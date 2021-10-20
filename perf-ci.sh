@@ -47,6 +47,11 @@ cp *.csv transformer-bench-results/latest/
 #mmperf tests
 cd mmperf
 
+rm -rf mmperf_env
+python -m venv mmperf_env
+source mmperf_env/bin/activate
+pip install -r requirements.txt
+
 #CPU tests
 
 if [ -d ${TVM_TUNED_CPU} ]; then
@@ -63,7 +68,7 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-./mmperf.py build/matmul  ../transformer-bench-results/latest/
+python mmperf.py build/matmul  ../transformer-bench-results/latest/
 
 mv build build.cpu
 
@@ -73,7 +78,7 @@ if [ -d ${TVM_TUNED_GPU} ] ; then
   cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -DUSE_TVM_CUDA=ON -DTVM_ENABLE_CUDA=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_GPU} -B build .
 else
   echo "No TVM tuned libs so skipping.."
-  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -DUSE_TVM_CUDA=ON -DTVM_ENABLE_CUDA=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_GPU} -B build .
+  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -B build .
 fi
 
 #build mmperf
@@ -82,7 +87,7 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-./mmperf.py build/matmul  ../transformer-bench-results/latest/
+python mmperf.py build/matmul  ../transformer-bench-results/latest/
 
 mv build build.gpu
 
