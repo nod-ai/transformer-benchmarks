@@ -9,16 +9,17 @@ while getopts “n” OPTION
 do
      case $OPTION in
          n)
+             echo "Not checking out src tree.. running from current checkout.."
              NO_SRC=true
              ;;
          ?)
-             "Unsupported option.. -n for no checkout and run as developer instead of a CI"
+             echo "Unsupported option.. -n for no checkout and run as developer instead of a CI"
              exit
              ;;
      esac
 done
 
-if [ "$NO_SRC" = true]; then
+if [ "$NO_SRC" = true ]; then
   echo "Using existing checkout"
 else
   echo "Checking out transformer-benchmarks..."
@@ -44,7 +45,7 @@ cd mmperf
 
 #CPU tests
 
-if [ -d ${TVM_TUNED_CPU}; then
+if [ -d ${TVM_TUNED_CPU} ]; then
   echo "Using TVM TUNED for CPU"
   cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_DYLIB=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_CPU} -B build .
 else
@@ -63,12 +64,12 @@ cmake --build build
 mv build build.cpu
 
 #GPU tests
-if [ -d ${TVM_TUNED_GPU}; then
+if [ -d ${TVM_TUNED_GPU} ] ; then
   echo "Using TVM TUNED for GPU"
-  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_DYLIB=ON -B build .
+  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -DUSE_TVM_CUDA=ON -DTVM_ENABLE_CUDA=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_GPU} -B build .
 else
   echo "No TVM tuned libs so skipping.."
-  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_DYLIB=ON -B build .
+  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -DUSE_TVM_CUDA=ON -DTVM_ENABLE_CUDA=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_GPU} -B build .
 fi
 
 #build mmperf
