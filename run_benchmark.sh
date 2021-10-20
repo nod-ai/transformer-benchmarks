@@ -1,20 +1,40 @@
+#!/bin/bash -e
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation.  All rights reserved.
+# Copyright (c) Nod, Inc.  All rights reserved.
 # Licensed under the MIT License.  See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 # This measures the performance of OnnxRuntime, PyTorch and TorchScript on transformer models.
-# Please install PyTorch (see https://pytorch.org/) before running this benchmark. Like the following:
+# Please install PyTorch or Tensorflow or MLIR Runtime (see https://pytorch.org/) before running this benchmark. Like the following:
 # GPU:   conda install pytorch torchvision cudatoolkit=11.0 -c pytorch
 # CPU:   conda install pytorch torchvision cpuonly -c pytorch
 
 # When use_package=true, you need not copy other files to run benchmarks except this sh file.
 # Otherwise, it will use python script (*.py) files in this directory.
-use_package=false
 
-# only need once
-run_install=true
+ARGUMENT_LIST=(
+    "gpu_fp32"
+    "gpu_fp16"
+    "cpu_fp32"
+    "cpu_int8"
+    "ort"
+    "torch"
+    "torchscript"
+    "tensorflow"
+    "mlir"
+    "pip_install_pkg"
+    "ort_optimizer"
+    "create_venv"
+    "with_nsys"
+)
 
+#setup defaults
+# Devices to test (You can run either CPU or GPU, but not both: gpu need onnxruntime-gpu, and CPU need onnxruntime).
+run_gpu_fp32=false
+run_gpu_fp16=false
+run_cpu_fp32=true
+run_cpu_int8=false
 # Engines to test.
 run_ort=true
 run_torch=false
@@ -22,23 +42,134 @@ run_torchscript=true
 run_tensorflow=true
 run_mlir=true
 
+# only need once
+run_create_venv=false
+install_pkg=true
+run_with_nsys=true
+
+# Enable optimizer (use script instead of OnnxRuntime for graph optimization)
+use_optimizer=true
+
+# read arguments
+opts=$(getopt \
+    --longoptions "$(printf "%s:," "${ARGUMENT_LIST[@]}")" \
+    --name "$(basename "$0")" \
+    --options "" \
+    -- "$@"
+)
+
+eval set --$opts
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --with_nsys)
+            run_with_nsys=$2
+            shift 2
+            ;;
+        --create_venv)
+            run_create_venv=$2
+            echo  "Removing old bench_venv.."
+            rm -rf bench_venv
+            echo  "Creating new bench_venv.."
+            python -m venv bench_venv
+            echo  "sourcing new env.."
+            source bench_venv/bin/activate
+            shift 2
+            ;;
+
+        --ort_optimizer)
+            use_optimizer=$2
+            shift 2
+            ;;
+
+        --pip_install_pkg)
+            install_pkg=$2
+            shift 2
+            ;;
+
+        --mlir)
+            run_mlir=$2
+            shift 2
+            ;;
+
+        --tensorflow)
+            run_tensorflow=$2
+            shift 2
+            ;;
+
+        --torchscript)
+            run_torchscript=$2
+            shift 2
+            ;;
+
+        --torch)
+            run_torch=$2
+            shift 2
+            ;;
+
+        --ort)
+            run_ort=$2
+            shift 2
+            ;;
+
+        --gpu_fp32)
+            run_gpu_fp32=$2
+            shift 2
+            ;;
+
+        --gpu_fp16)
+            run_gpu_fp16=$2
+            shift 2
+            ;;
+
+        --cpu_fp32)
+            run_cpu_fp32=$2
+            shift 2
+            ;;
+
+        --cpu_int8)
+            run_cpu_int8=$2
+            shift 2
+            ;;
+
+        *)
+            echo "Using defaults...: "
+            echo "   you can change them with --var=true or false"
+            break
+            ;;
+    esac
+done
+
+
+echo "Parsed command line args as:"
+echo "gpu_fp32 $run_gpu_fp32"
+echo "gpu_fp16 $run_gpu_fp16"
+echo "cpu_fp32 $run_cpu_fp32"
+echo "cpu_int8 $run_cpu_int8"
+
+echo "ort $run_ort"
+echo "ort_optimizer $use_optimizer"
+echo "torch $run_torch"
+echo "torchscript $run_torchscript"
+echo "tensorflow $run_tensorflow"
+echo "mlir $run_mlir"
+echo "create_venv $run_create_venv"
+echo "run_with_nsys $run_with_nsys"
+echo "pip_install_pkg $install_pkg"
+
+echo  "Check python path.. "
+which python
+
+use_package=false
 # Onnx model source (default is from pytorch, set export_onnx_from_tf=true to convert from tensorflow model)
 export_onnx_from_tf=false
 
-# Devices to test (You can run either CPU or GPU, but not both: gpu need onnxruntime-gpu, and CPU need onnxruntime).
-run_gpu_fp32=false
-run_gpu_fp16=false
-run_cpu_fp32=true
-run_cpu_int8=false
 
 average_over=1000
 # CPU takes longer time to run, only run 100 inferences to get average latency.
 if [ "$run_cpu_fp32" = true ] || [ "$run_cpu_int8" = true ]; then
   average_over=100
 fi
-
-# Enable optimizer (use script instead of OnnxRuntime for graph optimization)
-use_optimizer=true
 
 # Batch Sizes and Sequence Lengths
 batch_sizes="1"
@@ -83,7 +214,8 @@ if [ "$run_cpu_fp32" = true ] || [ "$run_cpu_int8" = true ]; then
 fi
 
 
-if [ "$run_install" = true ] ; then
+if [ "$install_pkg" = true ] ; then
+  pip install --upgrade pip
   pip uninstall --yes ort-nightly ort-gpu-nightly
   pip uninstall --yes onnxruntime
   pip uninstall --yes onnxruntime-gpu
