@@ -26,6 +26,9 @@ else
   git clone https://github.com/powderluv/transformer-benchmarks --recursive
   cd transformer-benchmarks
   git submodule update --init --recursive
+  cd mmperf/external/iree
+  git submodule update --init --recursive
+  cd -
 fi
 
 #E2E Transformer benchmarks
