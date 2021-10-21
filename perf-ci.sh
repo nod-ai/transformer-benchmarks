@@ -91,5 +91,14 @@ python mmperf.py build/matmul  ../transformer-bench-results/latest/
 
 mv build build.gpu
 
+cd ..
+
 gsutil cp -r transformer-bench-results/* gs://iree-shared-files/nod-perf/results/transformer-bench/
-rm -rf transformer-bench-results
+
+if [ "$NO_SRC" = true ]; then
+  echo "leaving sources and results for manual clean up"
+else
+  cd ..
+  echo "deleting transformer-benchmarks..."
+  rm -rf transformer-bench
+fi
