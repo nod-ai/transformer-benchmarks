@@ -42,7 +42,7 @@ mkdir -p  transformer-bench-results/${TIMESTAMP}
 cd transformer-bench-results
 ln -s ${TIMESTAMP} latest
 cd ../
-cp *.csv transformer-bench-results/latest/
+cp *.csv transformer-bench-results/latest/BERT_e2e/
 
 #mmperf tests
 cd mmperf
@@ -68,17 +68,17 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python mmperf.py build/matmul  ../transformer-bench-results/latest/
+python mmperf.py build/matmul  ../transformer-bench-results/latest/mmperf-cpu/
 
 mv build build.cpu
 
 #GPU tests
 if [ -d ${TVM_TUNED_GPU} ] ; then
   echo "Using TVM TUNED for GPU"
-  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -DUSE_TVM_CUDA=ON -DTVM_ENABLE_CUDA=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_GPU} -B build .
+  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DCMAKE_CUDA_COMPILER=nvcc -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -DUSE_TVM_CUDA=ON -DTVM_ENABLE_CUDA=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_GPU} -B build .
 else
   echo "No TVM tuned libs so skipping.."
-  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -B build .
+  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_CUDA_COMPILER=nvcc -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_CUDA=ON -DUSE_CUBLAS=ON -B build .
 fi
 
 #build mmperf
@@ -87,12 +87,13 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python mmperf.py build/matmul  ../transformer-bench-results/latest/
+python mmperf.py build/matmul  ../transformer-bench-results/latest/mmperf-gpu/
 
 mv build build.gpu
 
 cd ..
 
+echo "Copying to Google Storage.."
 gsutil cp -r transformer-bench-results/* gs://iree-shared-files/nod-perf/results/transformer-bench/
 
 if [ "$NO_SRC" = true ]; then
