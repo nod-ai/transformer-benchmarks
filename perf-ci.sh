@@ -29,6 +29,8 @@ else
   cd mmperf/external/iree
   git submodule update --init --recursive
   cd -
+  echo "Updating submodules to origin/main...things may break.. but that is the point.."
+  ./update_submodules.sh
 fi
 
 #E2E Transformer benchmarks
