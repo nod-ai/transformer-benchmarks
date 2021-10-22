@@ -40,11 +40,11 @@ fi
 #Gather results
 TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
 
-mkdir -p  transformer-bench-results/${TIMESTAMP}
+mkdir -p  transformer-bench-results/${TIMESTAMP}/BERT_e2e/
 cd transformer-bench-results
 ln -s ${TIMESTAMP} latest
 cd ../
-cp *.csv transformer-bench-results/latest/BERT_e2e/
+cp *.csv transformer-bench-results/${TIMESTAMP}/BERT_e2e/
 
 #mmperf tests
 cd mmperf
@@ -71,7 +71,7 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python mmperf.py build/matmul  ../transformer-bench-results/latest/mmperf-cpu/
+python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-cpu/
 
 mv build build.cpu
 
@@ -90,11 +90,14 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python mmperf.py build/matmul  ../transformer-bench-results/latest/mmperf-gpu/
+python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-gpu/
 
 mv build build.gpu
 
 cd ..
+
+echo "Remove old symlink.."
+gsutil rm -rf gs://iree-shared-files/nod-perf/results/transformer-bench/latest
 
 echo "Copying to Google Storage.."
 gsutil cp -r transformer-bench-results/* gs://iree-shared-files/nod-perf/results/transformer-bench/
@@ -102,7 +105,8 @@ gsutil cp -r transformer-bench-results/* gs://iree-shared-files/nod-perf/results
 if [ "$NO_SRC" = true ]; then
   echo "leaving sources and results for manual clean up"
 else
-  cd ..
+  cd ../..
   echo "deleting transformer-benchmarks..."
+  echo `pwd`
   rm -rf transformer-bench
 fi
