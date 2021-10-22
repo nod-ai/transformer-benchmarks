@@ -50,8 +50,9 @@ cp *.csv transformer-bench-results/latest/BERT_e2e/
 cd mmperf
 
 rm -rf mmperf_env
-python -m venv mmperf_env
+python3.9 -m venv mmperf_env
 source mmperf_env/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 
 #CPU tests
