@@ -41,9 +41,6 @@ fi
 TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
 
 mkdir -p  transformer-bench-results/${TIMESTAMP}/BERT_e2e/
-cd transformer-bench-results
-ln -s ${TIMESTAMP} latest
-cd ../
 cp *.csv transformer-bench-results/${TIMESTAMP}/BERT_e2e/
 
 #mmperf tests
@@ -59,10 +56,10 @@ pip install -r requirements.txt
 
 if [ -d ${TVM_TUNED_CPU} ]; then
   echo "Using TVM TUNED for CPU"
-  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_TVM=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_DYLIB=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_CPU} -B build .
+  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_TVM=ON -DUSE_MKL=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_DYLIB=ON -DUSE_TVM_TUNED=ON -DTVM_LIB_DIR=${TVM_TUNED_CPU} -B build .
 else
   echo "No TVM tuned libs so skipping.."
-  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_DYLIB=ON -B build .
+  cmake -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DMKL_DIR=/opt/intel/oneapi/mkl/latest/ -DUSE_MKL=ON -DUSE_MLIR=ON -DUSE_IREE=ON -DIREE_DYLIB=ON -B build .
 fi
 
 #build mmperf
@@ -95,6 +92,10 @@ python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-
 mv build build.gpu
 
 cd ..
+
+cd transformer-bench-results
+ln -s ${TIMESTAMP} latest
+cd ../
 
 echo "Remove old symlink.."
 gsutil rm -rf gs://iree-shared-files/nod-perf/results/transformer-bench/latest
