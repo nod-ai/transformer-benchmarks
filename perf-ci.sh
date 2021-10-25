@@ -33,17 +33,17 @@ else
   #./update_submodules.sh
 fi
 
+#Gather results
+TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
+
 rm -rf perf_env
 python3.9 -m venv perf_env
 source perf_env/bin/activate
 
 #E2E Transformer benchmarks
 ./run_benchmark.sh --cpu_fp32=true --create_venv=true --ort=true --torchscript=true --tensorflow=true --mlir=true --ort_optimizer=false
-./run_benchmark.sh --gpu_fp32=true --create_venv=true --ort=true --torchscript=true --tensorflow=true --mlir=true --ort_optimizer=false
+./run_benchmark.sh --gpu_fp32=true --cpu_fp32=false --create_venv=true --ort=true --torchscript=true --tensorflow=true --mlir=true --ort_optimizer=false
 
-
-#Gather results
-TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
 
 mkdir -p  transformer-bench-results/${TIMESTAMP}/BERT_e2e/
 cp *.csv transformer-bench-results/${TIMESTAMP}/BERT_e2e/
