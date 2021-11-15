@@ -69,6 +69,8 @@ fi
 
 #build mmperf
 cmake --build build
+#Sometimes bad things happen to MLIR deps and ninja deps. Lets do another try.
+cmake --build build
 
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
@@ -87,6 +89,8 @@ else
 fi
 
 #build mmperf
+cmake --build build
+#Sometimes bad things happen to MLIR deps and ninja deps. Lets do another try.
 cmake --build build
 
 #Run all tests and generate the plots
