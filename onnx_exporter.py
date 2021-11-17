@@ -385,8 +385,7 @@ def export_onnx_model_from_pt(model_name, opset_version, use_external_data_forma
                           output_names=output_names,
                           dynamic_axes=dynamic_axes,
                           do_constant_folding=True,
-                          opset_version=opset_version,
-                          use_external_data_format=use_external_data_format)
+                          opset_version=opset_version)
         restore_torch_functions()
     else:
         logger.info(f"Skip export since model existed: {onnx_model_path}")
