@@ -292,13 +292,15 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
 
     # Compile the model using IREE
     backend = "dylib-llvm-aot"
+    args = ["--iree-llvm-target-triple=x86_64-pc-linux-gnu", "--iree-llvm-target-cpu-features=host", "--iree-llvmcpu-use-tile-fuse-and-vectorize"]
     backend_config = "dylib"
     if use_gpu:
         backend = "cuda"
         backend_config = "cuda"
+        args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-llvm-target-cpu-features=host", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
 
     compiler_module = tfc.compile_module(BertModule(), exported_names = ["predict"], import_only=True)
-    flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=["--iree-llvm-target-triple=x86_64-pc-linux-gnu", "--iree-llvm-target-cpu-features=host", "--iree-llvmcpu-use-tile-fuse-and-vectorize"])
+    flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=args)
     #flatbuffer_blob = compile_str(compiler_module, target_backends=[backend])
 
     # Save module as MLIR file in a directory
