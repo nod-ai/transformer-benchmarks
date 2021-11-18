@@ -292,7 +292,7 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
 
     # Compile the model using IREE
     backend = "dylib-llvm-aot"
-    args = ["--iree-llvm-target-triple=x86_64-pc-linux-gnu", "--iree-llvm-target-cpu-features=host", "--iree-llvmcpu-use-tile-fuse-and-vectorize"]
+    args = ["--iree-llvm-target-cpu-features=host"]
     backend_config = "dylib"
     if use_gpu:
         backend = "cuda"
