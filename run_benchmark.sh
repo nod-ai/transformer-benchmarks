@@ -31,24 +31,24 @@ ARGUMENT_LIST=(
 
 #setup defaults
 # Devices to test (You can run either CPU or GPU, but not both: gpu need onnxruntime-gpu, and CPU need onnxruntime).
-run_gpu_fp32=false
+run_gpu_fp32=true
 run_gpu_fp16=false
-run_cpu_fp32=true
+run_cpu_fp32=false
 run_cpu_int8=false
 # Engines to test.
-run_ort=true
+run_ort=false
 run_torch=false
-run_torchscript=true
-run_tensorflow=true
+run_torchscript=false
+run_tensorflow=false
 run_mlir=true
 
 # only need once
 run_create_venv=false
-install_pkg=true
+install_pkg=false
 run_with_nsys=true
 
 # Enable optimizer (use script instead of OnnxRuntime for graph optimization)
-use_optimizer=true
+use_optimizer=false
 
 # read arguments
 opts=$(getopt \
@@ -220,7 +220,7 @@ if [ "$install_pkg" = true ] ; then
   pip uninstall --yes onnxruntime
   pip uninstall --yes onnxruntime-gpu
   pip uninstall --yes torch
-  pip uninstall --yes iree-compiler-snapshot iree-runtime-snapshot iree-tools-tf-snapshot iree-tools-tflite-snapshot iree-tools-xla-snapshot
+  pip uninstall --yes iree-compiler iree-runtime iree-tools-tf iree-tools-tflite iree-tools-xla
 
   if [ "$run_cpu_fp32" = true ] || [ "$run_cpu_int8" = true ]; then
     pip install onnxruntime
@@ -235,7 +235,7 @@ if [ "$install_pkg" = true ] ; then
   pip install gin-config 
 
   ### Installing IREE-Python
-  python -m pip install iree-compiler-snapshot iree-runtime-snapshot iree-tools-tf-snapshot iree-tools-tflite-snapshot iree-tools-xla-snapshot --find-links https://github.com/google/iree/releases
+  python -m pip install iree-compiler iree-runtime iree-tools-tf iree-tools-tflite iree-tools-xla --find-links https://github.com/google/iree/releases
 fi
 
 if [ "$use_package" = true ] ; then
