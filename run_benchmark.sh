@@ -44,7 +44,7 @@ run_mlir=true
 
 # only need once
 run_create_venv=false
-install_pkg=false
+install_pkg=true
 run_with_nsys=true
 
 # Enable optimizer (use script instead of OnnxRuntime for graph optimization)
