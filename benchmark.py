@@ -300,7 +300,7 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
         args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
 
     compiler_module = tfc.compile_module(BertModule(), exported_names = ["predict"], import_only=True)
-    flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=args)
+    flatbuffer_blob = compile_str(compiler_module, input_type="mhlo", target_backends=[backend], extra_args=args)
     #flatbuffer_blob = compile_str(compiler_module, target_backends=[backend])
 
     # Save module as MLIR file in a directory
