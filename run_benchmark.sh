@@ -36,10 +36,10 @@ run_gpu_fp16=false
 run_cpu_fp32=false
 run_cpu_int8=false
 # Engines to test.
-run_ort=false
+run_ort=true
 run_torch=false
-run_torchscript=false
-run_tensorflow=false
+run_torchscript=true
+run_tensorflow=true
 run_mlir=true
 
 # only need once
