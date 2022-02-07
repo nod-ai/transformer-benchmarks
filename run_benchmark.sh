@@ -36,10 +36,10 @@ run_gpu_fp16=false
 run_cpu_fp32=false
 run_cpu_int8=false
 # Engines to test.
-run_ort=false
+run_ort=true
 run_torch=false
-run_torchscript=false
-run_tensorflow=false
+run_torchscript=true
+run_tensorflow=true
 run_mlir=true
 
 # only need once
@@ -181,7 +181,7 @@ sequence_lengths="128"
 input_counts=1
 
 # Pretrained transformers models can be a subset of: bert-base-cased roberta-base gpt2 distilgpt2 distilbert-base-uncased
-#models_to_test="bert-base-cased roberta-base distilbert-base-uncased"
+models_to_test="bert-base-uncased"
 #models_to_test="philschmid/MiniLM-L6-H384-uncased-sst2"
 models_to_test="microsoft/MiniLM-L12-H384-uncased"
 #models_to_test="gpt2"
