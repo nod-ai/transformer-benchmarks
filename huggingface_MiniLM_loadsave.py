@@ -12,9 +12,10 @@ import tempfile
 import tensorflow as tf
 
 import time
+import cProfile
 from transformers import BertModel, BertTokenizer, TFBertModel
 
-MAX_SEQUENCE_LENGTH = 512
+MAX_SEQUENCE_LENGTH = 128
 BATCH_SIZE = 1
 
 # Create a set of 2-dimensional inputs
@@ -58,34 +59,36 @@ if __name__ == "__main__":
     #backend_config = "dylib"
     backend = "cuda"
     backend_config = "cuda"
-    #args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
+    #args = ["--iree-cuda-llvm-target-arch=sm_75", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
     # FIXME: Stella's GPU is only 7.5
-    args = ["--iree-cuda-llvm-target-arch=sm_75", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
+    args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
     flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=args, input_type="mhlo")
     #flatbuffer_blob = compile_str(compiled_data, target_backends=["dylib-llvm-aot"])
 
     # Save module as MLIR file in a directory
+    ireert.flags.FUNCTION_INPUT_VALIDATION = False
+    ireert.flags.parse_flags("--cuda_allow_inline_execution")
     vm_module = ireert.VmModule.from_flatbuffer(flatbuffer_blob)
     #tracer = ireert.Tracer(os.getcwd())
     config = ireert.Config(backend_config)
     ctx = ireert.SystemContext(config=config)
     ctx.add_vm_module(vm_module)
-    BertCompiled = ctx.modules.module
-    #result = BertCompiled.predict(encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"])
-    #print(result)
-    warmup = 1
-    total_iter = 10
-    num_iter = total_iter - warmup
+
+    # Setting up training/benchmark information.
+    total_iter = 15
     host_inputs =[encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"]]
     device_inputs = [ireert.asdevicearray(config.device, a) for a in host_inputs]
-    for i in range(total_iter):
-        if(i == warmup-1):
-            start = time.time()
-        device_outputs = BertCompiled.predict(*device_inputs)
-    end = time.time()
+    BertCompiled = ctx.modules.module
+    predict_f = BertCompiled.predict
+    device_outputs = predict_f(*device_inputs)
+    with cProfile.Profile(timer=time.perf_counter_ns, timeunit=0.000001) as pr:
+        start = time.time()
+        for i in range(total_iter):
+            device_outputs = predict_f(*device_inputs)
+        end = time.time()
 
     print("RESULTS:", {k:v.to_host() for k, v in device_outputs.items()})
 
     total_time = end - start
     print("time: "+str(total_time))
-    print("time/iter: "+str(total_time/num_iter))
+    print("time/iter: "+str(total_time/total_iter))

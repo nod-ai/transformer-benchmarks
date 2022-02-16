@@ -298,6 +298,8 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
         backend = "cuda"
         backend_config = "cuda"
         args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
+        ireert.flags.FUNCTION_INPUT_VALIDATION = False
+        ireert.flags.parse_flags("--cuda_allow_inline_execution")
 
     compiler_module = tfc.compile_module(BertModule(), exported_names = ["predict"], import_only=True)
     flatbuffer_blob = compile_str(compiler_module, input_type="mhlo", target_backends=[backend], extra_args=args)
@@ -327,9 +329,12 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
     host_inputs =[encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"]]
     if use_gpu:
         device_inputs = [ireert.asdevicearray(config.device, a) for a in host_inputs]
+    else:
+        device_inputs = host_inputs
 
     try:
-        runtimes = timeit.repeat(lambda: BertCompiled.predict(*device_inputs), repeat=repeat_times, number=1)
+        bert_predict = BertCompiled.predict
+        runtimes = timeit.repeat(lambda: bert_predict(*device_inputs), repeat=repeat_times, number=1)
         result = {
             "engine": "MLIR",
             "version": tf.__version__,
