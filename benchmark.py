@@ -297,7 +297,7 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
     if use_gpu:
         backend = "cuda"
         backend_config = "cuda"
-        args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
+        args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa"]
         ireert.flags.FUNCTION_INPUT_VALIDATION = False
         ireert.flags.parse_flags("--cuda_allow_inline_execution")
 
