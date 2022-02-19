@@ -391,7 +391,8 @@ def run_tensorflow(use_gpu, model_names, model_class, precision, num_threads, ba
     if not use_gpu:
         tf.config.set_visible_devices([], 'GPU')
 
-    if use_gpu and not tf.test.is_built_with_cuda():
+    physical_devices = tf.config.list_physical_devices('GPU')
+    if use_gpu and not physical_devices:
         logger.error("Please install Tensorflow-gpu, and use a machine with GPU for testing gpu performance.")
         return results
 
@@ -439,15 +440,15 @@ def run_tensorflow(use_gpu, model_names, model_class, precision, num_threads, ba
 
                 try:
                     # Disable both for better inference perf
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=True)
+                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
                     def encoder_forward():
                         return model(input_ids, training=False)
 
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=True)
+                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
                     def encoder_decoder_forward():
                         return model(input_ids, decoder_input_ids=input_ids, training=False)
 
-                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=True)
+                    @run_with_tf_optimizations(do_eager_mode=False, use_xla=False)
                     def lxmert_forward():
                         feats = tf.random.normal([1, 1, config.visual_feat_dim])
                         pos = tf.random.normal([1, 1, config.visual_pos_dim])
