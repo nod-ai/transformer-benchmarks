@@ -47,6 +47,7 @@ source perf_env/bin/activate
 
 mkdir -p  transformer-bench-results/${TIMESTAMP}/BERT_e2e/
 cp *.csv transformer-bench-results/${TIMESTAMP}/BERT_e2e/
+cp model.mlir transformer-bench-results/${TIMESTAMP}/BERT_e2e/model_${TIMESTAMP}.mlir
 
 #mmperf tests
 cd mmperf
