@@ -246,9 +246,18 @@ def run_pytorch(use_gpu, model_names, model_class, precision, num_threads, batch
 
 class ModuleFactory(torch.nn.Module):
 
-    def __init__(self, model):
+    def __init__(self, model_name):
         super().__init__()
-        self.model = model
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            "microsoft/MiniLM-L12-H384-uncased",  # The pretrained model.
+            num_labels=
+            2,  # The number of output labels--2 for binary classification.
+            output_attentions=
+            False,  # Whether the model returns attentions weights.
+            output_hidden_states=
+            False,  # Whether the model returns all hidden-states.
+            torchscript=True,
+        )
 
     def forward(self, tokens):
         return self.model.forward(tokens)[0]
@@ -259,33 +268,22 @@ def run_shark(use_gpu, model_names, model_class, precision, num_threads,
               cache_dir, verbose):
     results = []
 
-    def _prepare_sentence_tokens(sentence: str):
-        return torch.tensor([tokenizer.encode(sentence)])
 
     for model_name in model_names:
         config = AutoConfig.from_pretrained(model_name,
                                             torchscript=torchscript,
-                                            cache_dir=cache_dir,
-                                            num_labels=2,
-                                            output_attentions=False,
-                                            output_hidden_states=False)
-        Model = AutoModelForSequenceClassification.from_pretrained(model_name,
-                num_labels=2,
-                output_attentions=False,
-                output_hidden_states=False)
-        #model = load_pretrained_model(model_name,
-        #                              config=config,
-        #                              cache_dir=cache_dir,
-        #                              custom_model_class=model_class)
+                                            cache_dir=cache_dir)
+        model = load_pretrained_model(model_name,
+                                      config=config,
+                                      cache_dir=cache_dir,
+                                      custom_model_class=model_class)
+
         tokenizer = AutoTokenizer.from_pretrained(model_name,
                                                   cache_dir=cache_dir)
-        module = ModuleFactory(Model)
-
         max_input_size = tokenizer.max_model_input_sizes[
             model_name] if model_name in tokenizer.max_model_input_sizes else 1024
-
-#        logger.debug(f"Model {model}")
-#        logger.debug(f"Number of parameters {model.num_parameters()}")
+        logger.debug(f"Model {model}")
+        logger.debug(f"Number of parameters {model.num_parameters()}")
 
         if precision == Precision.FLOAT16:
             print("FLOAT16 Not yet supported by shark")
@@ -295,31 +293,28 @@ def run_shark(use_gpu, model_names, model_class, precision, num_threads,
             print("INT8 Not yet supported by shark")
             return []
 
+        device = torch.device("cuda:0" if use_gpu else "cpu")
         for batch_size in batch_sizes:
             if batch_size <= 0:
                 continue
 
             for sequence_length in sequence_lengths:
-                if max_input_size is not None and sequence_length > max_input_size:
-                    continue
 
-                logger.info("Run Shark on {} with input shape {}".format(
-                    model_name, [batch_size, sequence_length]))
                 input_ids = torch.randint(low=0,
                                           high=config.vocab_size - 1,
                                           size=(batch_size, sequence_length),
-                                          dtype=torch.long)
+                                          dtype=torch.long,
+                                          device=device)
+                shark_module = SharkInference(
+                    ModuleFactory(model_name), (input_ids, ),
+                    device="gpu" if use_gpu else "cpu",
+                    jit_trace=True)
                 try:
-                    shark_module = SharkInference(
-                        module,
-                        input_ids,
-                        True,
-                         "cpu")
 
                     inference = shark_module.forward
-                    inference(input_ids)
-
-                    runtimes = timeit.repeat(lambda: module.forward(input_ids),
+                    inference((input_ids, ))
+                    runtimes = timeit.repeat(lambda: shark_module.forward(
+                        (input_ids, )),
                                              repeat=repeat_times,
                                              number=1)
 
