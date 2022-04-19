@@ -22,7 +22,8 @@ ARGUMENT_LIST=(
     "torch"
     "torchscript"
     "tensorflow"
-    "mlir"
+    "iree"
+    "shark"
     "pip_install_pkg"
     "ort_optimizer"
     "create_venv"
@@ -37,10 +38,11 @@ run_cpu_fp32=false
 run_cpu_int8=false
 # Engines to test.
 run_ort=true
+run_shark=true
 run_torch=false
 run_torchscript=true
 run_tensorflow=true
-run_mlir=true
+run_iree=true
 
 # only need once
 run_create_venv=false
@@ -71,7 +73,7 @@ while [[ $# -gt 0 ]]; do
             echo  "Removing old bench_venv.."
             rm -rf bench_venv
             echo  "Creating new bench_venv.."
-            python -m venv bench_venv
+            python3.9 -m venv bench_venv
             echo  "sourcing new env.."
             source bench_venv/bin/activate
             shift 2
@@ -87,10 +89,15 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
 
-        --mlir)
-            run_mlir=$2
+        --iree)
+            run_iree=$2
             shift 2
             ;;
+	
+	--shark)
+	    run_shark=$2
+	    shift 2
+	    ;;
 
         --tensorflow)
             run_tensorflow=$2
@@ -149,10 +156,11 @@ echo "cpu_int8 $run_cpu_int8"
 
 echo "ort $run_ort"
 echo "ort_optimizer $use_optimizer"
+echo "shark $run_shark"
 echo "torch $run_torch"
 echo "torchscript $run_torchscript"
 echo "tensorflow $run_tensorflow"
-echo "mlir $run_mlir"
+echo "iree $run_iree"
 echo "create_venv $run_create_venv"
 echo "run_with_nsys $run_with_nsys"
 echo "pip_install_pkg $install_pkg"
@@ -190,7 +198,7 @@ models_to_test="microsoft/MiniLM-L12-H384-uncased"
 # export CUDA_VISIBLE_DEVICES=1
 
 # This script will generate a logs file with a list of commands used in tests.
-echo echo "ort=$run_ort torch=$run_torch torchscript=$run_torchscript tensorflow=$run_tensorflow mlir=$run_mlir gpu_fp32=$run_gpu_fp32 gpu_fp16=$run_gpu_fp16 cpu=$run_cpu optimizer=$use_optimizer batch=$batch_sizes sequence=$sequence_length models=$models_to_test" >> benchmark.log
+echo echo "ort=$run_ort torch=$run_torch torchscript=$run_torchscript tensorflow=$run_tensorflow iree=$run_iree gpu_fp32=$run_gpu_fp32 gpu_fp16=$run_gpu_fp16 cpu=$run_cpu optimizer=$use_optimizer batch=$batch_sizes sequence=$sequence_length models=$models_to_test" >> benchmark.log
 
 # Set it to false to skip testing. You can use it to dry run this script with the log file.
 run_tests=true
@@ -236,6 +244,15 @@ if [ "$install_pkg" = true ] ; then
 
   ### Installing IREE-Python
   python -m pip install iree-compiler iree-runtime iree-tools-tf iree-tools-tflite iree-tools-xla --find-links https://github.com/google/iree/releases
+
+
+  ### Installing shark
+  git submodule update --init
+  pip install -r `pwd`/thirdparty/dSHARK/requirements.txt
+  python -m pip install --find-links https://github.com/llvm/torch-mlir/releases torch-mlir
+  python -m pip install ninja
+  python -m pip install thirdparty/dSHARK
+
 fi
 
 if [ "$use_package" = true ] ; then
@@ -269,6 +286,13 @@ run_one_test() {
       fi
     fi
 
+    if [ "$run_shark" = true ] ; then
+      echo python $benchmark_script -e shark -m $1 $benchmark_options $2 $3 $4 >> benchmark.log
+      if [ "$run_tests" = true ] ; then
+        python $benchmark_script -e shark -m $1 $benchmark_options $2 $3 $4
+      fi
+    fi
+
     if [ "$run_torch" = true ] ; then
       echo python $benchmark_script -e torch -m $1 $benchmark_options $2 $3 $4 >> benchmark.log
       if [ "$run_tests" = true ] ; then
@@ -290,10 +314,10 @@ run_one_test() {
       fi
     fi
 
-    if [ "$run_mlir" = true ] ; then
-      echo python $benchmark_script -e mlir -m $1 $benchmark_options $2 $3 $4 >> benchmark.log
+    if [ "$run_iree" = true ] ; then
+      echo python $benchmark_script -e iree -m $1 $benchmark_options $2 $3 $4 >> benchmark.log
       if [ "$run_tests" = true ] ; then
-        python $benchmark_script -e mlir -m $1 $benchmark_options $2 $3 $4
+        python $benchmark_script -e iree -m $1 $benchmark_options $2 $3 $4
       fi
     fi
 }

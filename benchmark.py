@@ -43,11 +43,12 @@ import logging
 import timeit
 from datetime import datetime
 import numpy
-
+from shark.shark_runner import SharkInference
 import os
 import psutil
 import onnx
 from enum import Enum
+from transformers import AutoModelForSequenceClassification
 from benchmark_helper import (create_onnxruntime_session, Precision, setup_logger, get_latency_result, output_details,
                               output_summary, output_fusion_statistics, inference_ort, inference_ort_with_io_binding,
                               allocateOutputBuffers)
@@ -243,8 +244,112 @@ def run_pytorch(use_gpu, model_names, model_class, precision, num_threads, batch
     return results
 
 
-def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_sizes, sequence_lengths,
-                   repeat_times, cache_dir, verbose):
+class ModuleFactory(torch.nn.Module):
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, tokens):
+        return self.model.forward(tokens)[0]
+
+
+def run_shark(use_gpu, model_names, model_class, precision, num_threads,
+              batch_sizes, sequence_lengths, repeat_times, torchscript,
+              cache_dir, verbose):
+    results = []
+
+    def _prepare_sentence_tokens(sentence: str):
+        return torch.tensor([tokenizer.encode(sentence)])
+
+    for model_name in model_names:
+        config = AutoConfig.from_pretrained(model_name,
+                                            torchscript=torchscript,
+                                            cache_dir=cache_dir,
+                                            num_labels=2,
+                                            output_attentions=False,
+                                            output_hidden_states=False)
+        Model = AutoModelForSequenceClassification.from_pretrained(model_name,
+                num_labels=2,
+                output_attentions=False,
+                output_hidden_states=False)
+        #model = load_pretrained_model(model_name,
+        #                              config=config,
+        #                              cache_dir=cache_dir,
+        #                              custom_model_class=model_class)
+        tokenizer = AutoTokenizer.from_pretrained(model_name,
+                                                  cache_dir=cache_dir)
+        module = ModuleFactory(Model)
+
+        max_input_size = tokenizer.max_model_input_sizes[
+            model_name] if model_name in tokenizer.max_model_input_sizes else 1024
+
+#        logger.debug(f"Model {model}")
+#        logger.debug(f"Number of parameters {model.num_parameters()}")
+
+        if precision == Precision.FLOAT16:
+            print("FLOAT16 Not yet supported by shark")
+            return []
+
+        if precision == Precision.INT8:
+            print("INT8 Not yet supported by shark")
+            return []
+
+        for batch_size in batch_sizes:
+            if batch_size <= 0:
+                continue
+
+            for sequence_length in sequence_lengths:
+                if max_input_size is not None and sequence_length > max_input_size:
+                    continue
+
+                logger.info("Run Shark on {} with input shape {}".format(
+                    model_name, [batch_size, sequence_length]))
+                input_ids = torch.randint(low=0,
+                                          high=config.vocab_size - 1,
+                                          size=(batch_size, sequence_length),
+                                          dtype=torch.long)
+                try:
+                    shark_module = SharkInference(
+                        module,
+                        input_ids,
+                        True,
+                         "cpu")
+
+                    inference = shark_module.forward
+                    inference(input_ids)
+
+                    runtimes = timeit.repeat(lambda: module.forward(input_ids),
+                                             repeat=repeat_times,
+                                             number=1)
+
+                    result = {
+                        "engine": "shark",
+                        "version":
+                        "1.0",  #TODO: replace with shark version when shark is versioned
+                        "device": "cuda" if use_gpu else "cpu",
+                        "optimizer": "",
+                        "precision": precision,
+                        "io_binding": "",
+                        "model_name": model_name,
+                        "inputs": 1,
+                        "threads": num_threads,
+                        "batch_size": batch_size,
+                        "sequence_length": sequence_length,
+                        "datetime": str(datetime.now()),
+                    }
+                    result.update(get_latency_result(runtimes, batch_size))
+                    logger.info(result)
+                    results.append(result)
+                except RuntimeError as e:
+                    logger.exception(e)
+                    torch.cuda.empty_cache()
+
+    return results
+
+
+def run_iree(use_gpu, model_names, model_class, precision, num_threads,
+             batch_sizes, sequence_lengths, repeat_times, cache_dir, verbose):
     results = []
 
     from iree import runtime as ireert
@@ -261,7 +366,7 @@ def run_mlir(use_gpu, model_names, model_class, precision, num_threads, batch_si
     import time
     from transformers import BertModel, BertTokenizer, TFBertModel
 
-    # TODO: Adjust run_mlir S.T it can run on multiple batch_szs and sequence_lens
+    # TODO: Adjust run_iree S.T it can run on multiple batch_szs and sequence_lens
     MAX_SEQUENCE_LENGTH = sequence_lengths[0]
     BATCH_SIZE = 1
 
@@ -527,7 +632,10 @@ def parse_arguments():
                         nargs="+",
                         type=str,
                         default=['onnxruntime'],
-                        choices=['onnxruntime', 'torch', 'torchscript', 'tensorflow', 'mlir'],
+                        choices=[
+                            'onnxruntime', 'torch', 'torchscript',
+                            'tensorflow', 'iree', 'shark'
+                        ],
                         help="Engines to benchmark")
 
     parser.add_argument("-c",
@@ -602,7 +710,6 @@ def parse_arguments():
     parser.set_defaults(disable_ort_io_binding=False)
 
     parser.add_argument("-n", "--num_threads", required=False, nargs="+", type=int, default=[0], help="Threads to use")
-
     args = parser.parse_args()
     return args
 
@@ -630,27 +737,38 @@ def main():
         except OSError:
             logger.error("Creation of the directory %s failed" % args.cache_dir)
 
+    enable_shark = "shark" in args.engines
     enable_torch = "torch" in args.engines
     enable_torchscript = "torchscript" in args.engines
     enable_onnxruntime = "onnxruntime" in args.engines
     enable_tensorflow = "tensorflow" in args.engines
-    enable_mlir = "mlir" in args.engines
+    enable_iree = "iree" in args.engines
 
     results = []
 
     for num_threads in args.num_threads:
         torch.set_num_threads(num_threads)
         logger.debug(torch.__config__.parallel_info())
-        if enable_torch or enable_torchscript:
+        if enable_torch or enable_torchscript or enable_shark:
             if args.input_counts != [1]:
                 logger.warning("--input_counts is not implemented for torch or torchscript engine.")
 
+            if enable_shark:
+                logger.info("running shark...")
+                results += run_shark(args.use_gpu, args.models,
+                                     args.model_class, args.precision,
+                                     num_threads, args.batch_sizes,
+                                     args.sequence_lengths, args.test_times,
+                                     True, args.cache_dir, args.verbose)
+
             if enable_torchscript:
+                logger.info("running torchscript...")
                 results += run_pytorch(args.use_gpu, args.models, args.model_class, args.precision, num_threads,
                                        args.batch_sizes, args.sequence_lengths, args.test_times, True, args.cache_dir,
                                        args.verbose)
 
             if enable_torch:
+                logger.info("running torch...")
                 results += run_pytorch(args.use_gpu, args.models, args.model_class, args.precision, num_threads,
                                        args.batch_sizes, args.sequence_lengths, args.test_times, False, args.cache_dir,
                                        args.verbose)
@@ -659,10 +777,11 @@ def main():
             results += run_tensorflow(args.use_gpu, args.models, args.model_class, args.precision, num_threads,
                                       args.batch_sizes, args.sequence_lengths, args.test_times, args.cache_dir,
                                       args.verbose)
-        if enable_mlir:
-            results += run_mlir(args.use_gpu, args.models, args.model_class, args.precision, num_threads,
-                            args.batch_sizes, args.sequence_lengths, args.test_times, args.cache_dir,
-                            args.verbose)
+        if enable_iree:
+            results += run_iree(args.use_gpu, args.models, args.model_class,
+                                args.precision, num_threads, args.batch_sizes,
+                                args.sequence_lengths, args.test_times,
+                                args.cache_dir, args.verbose)
 
 
         model_fusion_statistics = {}

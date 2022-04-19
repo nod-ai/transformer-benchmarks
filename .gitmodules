@@ -1,3 +1,6 @@
 [submodule "mmperf"]
 	path = mmperf
 	url = https://github.com/mmperf/mmperf
+[submodule "thirdparty/dSHARK"]
+	path = thirdparty/dSHARK
+	url = https://github.com/NodLabs/dSHARK.git
