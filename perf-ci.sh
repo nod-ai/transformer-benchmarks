@@ -41,8 +41,8 @@ python3.9 -m venv perf_env
 source perf_env/bin/activate
 
 #E2E Transformer benchmarks
-./run_benchmark.sh --cpu_fp32=true --gpu_fp32=false --create_venv=true --ort=true --torchscript=true --tensorflow=true --mlir=true --ort_optimizer=false
-./run_benchmark.sh --gpu_fp32=true --cpu_fp32=false --create_venv=true --ort=true --torchscript=true --tensorflow=true --mlir=true --ort_optimizer=false
+./run_benchmark.sh --cpu_fp32=true --gpu_fp32=false --create_venv=true --ort=true --torchscript=true --tensorflow=true --iree=true --ort_optimizer=false
+./run_benchmark.sh --gpu_fp32=true --cpu_fp32=false --create_venv=true --ort=true --torchscript=true --tensorflow=true --iree=true --ort_optimizer=false
 
 
 mkdir -p  transformer-bench-results/${TIMESTAMP}/BERT_e2e/
