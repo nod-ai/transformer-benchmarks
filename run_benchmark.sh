@@ -38,7 +38,7 @@ run_cpu_fp32=false
 run_cpu_int8=false
 # Engines to test.
 run_ort=true
-run_shark=true
+run_shark=false
 run_torch=false
 run_torchscript=true
 run_tensorflow=true
