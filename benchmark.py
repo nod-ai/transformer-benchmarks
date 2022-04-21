@@ -43,7 +43,11 @@ import logging
 import timeit
 from datetime import datetime
 import numpy
-from shark.shark_runner import SharkInference
+shark_installed = True
+try:
+    from shark.shark_runner import SharkInference
+except ImportError:
+    shark_installed = False
 import os
 import psutil
 import onnx
@@ -733,6 +737,10 @@ def main():
             logger.error("Creation of the directory %s failed" % args.cache_dir)
 
     enable_shark = "shark" in args.engines
+    if enable_shark:
+        if not shark_installed:
+            enable_shark = False
+            logger.warning("Flags set shark to enabled but shark is not installed")
     enable_torch = "torch" in args.engines
     enable_torchscript = "torchscript" in args.engines
     enable_onnxruntime = "onnxruntime" in args.engines
