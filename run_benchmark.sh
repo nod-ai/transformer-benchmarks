@@ -245,13 +245,14 @@ if [ "$install_pkg" = true ] ; then
   ### Installing IREE-Python
   python -m pip install iree-compiler iree-runtime iree-tools-tf iree-tools-tflite iree-tools-xla --find-links https://github.com/google/iree/releases
 
-
-  ### Installing shark
-  git submodule update --init
-  pip install -r `pwd`/thirdparty/dSHARK/requirements.txt
-  python -m pip install --find-links https://github.com/llvm/torch-mlir/releases torch-mlir
-  python -m pip install ninja
-  python -m pip install thirdparty/dSHARK
+	if [ "$run_shark" = true ] ; then
+		### Installing shark
+		git submodule update --init
+		pip install -r `pwd`/thirdparty/dSHARK/requirements.txt --no-cache-dir
+		python -m pip install --find-links https://github.com/llvm/torch-mlir/releases torch-mlir
+		python -m pip install ninja
+		python -m pip install thirdparty/dSHARK
+	fi 
 
 fi
 
