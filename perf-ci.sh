@@ -23,7 +23,7 @@ if [ "$NO_SRC" = true ]; then
   echo "Using existing checkout"
 else
   echo "Checking out transformer-benchmarks..."
-  git clone https://github.com/powderluv/transformer-benchmarks --recursive
+  git clone https://github.com/nod-ai/transformer-benchmarks --recursive
   cd transformer-benchmarks
   git submodule update --init --recursive
   cd mmperf/external/iree
