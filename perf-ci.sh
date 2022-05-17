@@ -37,7 +37,7 @@ fi
 TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
 
 rm -rf perf_env
-python3.9 -m venv perf_env
+python3 -m venv perf_env
 source perf_env/bin/activate
 
 #E2E Transformer benchmarks
@@ -53,7 +53,7 @@ cp model.mlir transformer-bench-results/${TIMESTAMP}/BERT_e2e/model_${TIMESTAMP}
 cd mmperf
 
 rm -rf mmperf_env
-python3.9 -m venv mmperf_env
+python3 -m venv mmperf_env
 source mmperf_env/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
@@ -76,7 +76,7 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-cpu/
+python3 mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-cpu/
 
 mv build build.cpu
 
@@ -97,7 +97,7 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-gpu/
+python3 mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-gpu/
 
 mv build build.gpu
 
