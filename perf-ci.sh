@@ -36,9 +36,14 @@ fi
 #Gather results
 TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
 
-rm -rf perf_env
-python3 -m venv perf_env
-source perf_env/bin/activate
+. $HOME/miniconda3/etc/profile.d/conda.sh
+conda env remove -n perf_env
+conda create -n perf_env python=3.9 -y
+conda activate perf_env
+
+#rm -rf perf_env
+#python3 -m venv perf_env
+#source perf_env/bin/activate
 
 #E2E Transformer benchmarks
 ./run_benchmark.sh --cpu_fp32=true --gpu_fp32=false --create_venv=true --ort=true --torchscript=true --tensorflow=true --iree=true --ort_optimizer=false
@@ -52,10 +57,10 @@ cp model.mlir transformer-bench-results/${TIMESTAMP}/BERT_e2e/model_${TIMESTAMP}
 #mmperf tests
 cd mmperf
 
-rm -rf mmperf_env
-python3 -m venv mmperf_env
-source mmperf_env/bin/activate
-pip install --upgrade pip
+#rm -rf mmperf_env
+#python3 -m venv mmperf_env
+#source mmperf_env/bin/activate
+#pip install --upgrade pip
 pip install -r requirements.txt
 
 #CPU tests
@@ -76,7 +81,7 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python3 mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-cpu/
+python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-cpu/
 
 mv build build.cpu
 
@@ -97,7 +102,7 @@ cmake --build build
 #Run all tests and generate the plots
 #cmake --build build/matmul --target run_all_tests
 
-python3 mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-gpu/
+python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-gpu/
 
 mv build build.gpu
 
