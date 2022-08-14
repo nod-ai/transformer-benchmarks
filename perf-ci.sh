@@ -36,14 +36,14 @@ fi
 #Gather results
 TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
 
-. $HOME/miniconda3/etc/profile.d/conda.sh
-conda env remove -n perf_env
-conda create -n perf_env python=3.9 -y
-conda activate perf_env
+#. $HOME/miniconda3/etc/profile.d/conda.sh
+#conda env remove -n perf_env
+#conda create -n perf_env python=3.9 -y
+#conda activate perf_env
 
-#rm -rf perf_env
-#python3 -m venv perf_env
-#source perf_env/bin/activate
+rm -rf perf_env
+python3 -m venv perf_env
+source perf_env/bin/activate
 
 #E2E Transformer benchmarks
 ./run_benchmark.sh --cpu_fp32=true --gpu_fp32=false --create_venv=true --ort=true --torchscript=true --tensorflow=true --iree=true --ort_optimizer=false
@@ -57,10 +57,10 @@ cp model.mlir transformer-bench-results/${TIMESTAMP}/BERT_e2e/model_${TIMESTAMP}
 #mmperf tests
 cd mmperf
 
-#rm -rf mmperf_env
-#python3 -m venv mmperf_env
-#source mmperf_env/bin/activate
-#pip install --upgrade pip
+rm -rf mmperf_env
+python3 -m venv mmperf_env
+source mmperf_env/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 
 #CPU tests
@@ -79,7 +79,7 @@ cmake --build build
 cmake --build build
 
 #Run all tests and generate the plots
-#cmake --build build/matmul --target run_all_tests
+cmake --build build/matmul --target run_all_tests
 
 python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-cpu/
 
@@ -100,7 +100,7 @@ cmake --build build
 cmake --build build
 
 #Run all tests and generate the plots
-#cmake --build build/matmul --target run_all_tests
+cmake --build build/matmul --target run_all_tests
 
 python mmperf.py build/matmul  ../transformer-bench-results/${TIMESTAMP}/mmperf-gpu/
 
@@ -113,10 +113,10 @@ ln -s ${TIMESTAMP} latest
 cd ../
 
 echo "Remove old symlink.."
-gsutil rm -rf gs://iree-shared-files/nod-perf/results/transformer-bench/latest
+gsutil rm -rf gs://shark-public/nod-perf/results/transformer-bench/latest
 
 echo "Copying to Google Storage.."
-gsutil cp -r transformer-bench-results/* gs://iree-shared-files/nod-perf/results/transformer-bench/
+gsutil cp -r transformer-bench-results/* gs://shark-public/nod-perf/results/transformer-bench/
 
 if [ "$NO_SRC" = true ]; then
   echo "leaving sources and results for manual clean up"

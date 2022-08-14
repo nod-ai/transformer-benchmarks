@@ -73,7 +73,7 @@ while [[ $# -gt 0 ]]; do
             echo  "Removing old bench_venv.."
             rm -rf bench_venv
             echo  "Creating new bench_venv.."
-            python3.9 -m venv bench_venv
+            python3 -m venv bench_venv
             echo  "sourcing new env.."
             source bench_venv/bin/activate
             shift 2
