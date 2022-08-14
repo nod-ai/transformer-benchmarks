@@ -395,9 +395,9 @@ def run_iree(use_gpu, model_names, model_class, precision, num_threads,
         encoded_input[key] = tf.expand_dims(tf.convert_to_tensor(encoded_input[key]),0)
 
     # Compile the model using IREE
-    backend = "dylib-llvm-aot"
+    backend = "llvm-cpu"
     args = ["--iree-llvm-target-cpu-features=host"]
-    backend_config = "dylib"
+    backend_config = "local-task"
     if use_gpu:
         backend = "cuda"
         backend_config = "cuda"
