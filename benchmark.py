@@ -406,6 +406,13 @@ def run_iree(use_gpu, model_names, model_class, precision, num_threads,
         ireert.flags.parse_flags("--cuda_allow_inline_execution")
 
     compiler_module = tfc.compile_module(BertModule(), exported_names = ["predict"], import_only=True)
+
+    #Dump module
+    ARITFACTS_DIR = os.getcwd()
+    mlir_path = os.path.join(ARITFACTS_DIR, "model.mlir")
+    with open(mlir_path, "wt") as output_file:
+        output_file.write(compiler_module.decode('utf-8'))
+    print(f"Wrote MLIR to path '{mlir_path}'")
     flatbuffer_blob = compile_str(compiler_module, input_type="mhlo", target_backends=[backend], extra_args=args)
     #flatbuffer_blob = compile_str(compiler_module, target_backends=[backend])
 
@@ -417,13 +424,6 @@ def run_iree(use_gpu, model_names, model_class, precision, num_threads,
     ctx = ireert.SystemContext(config=config)
     ctx.add_vm_module(vm_module)
     BertCompiled = ctx.modules.module
-
-    #Dump module
-    ARITFACTS_DIR = os.getcwd()
-    mlir_path = os.path.join(ARITFACTS_DIR, "model.mlir")
-    with open(mlir_path, "wt") as output_file:
-        output_file.write(compiler_module.decode('utf-8'))
-    print(f"Wrote MLIR to path '{mlir_path}'")
 
     #result = BertCompiled.predict(encoded_input["input_ids"], encoded_input["attention_mask"], encoded_input["token_type_ids"])
     #print(result)
