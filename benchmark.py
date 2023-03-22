@@ -401,7 +401,7 @@ def run_iree(use_gpu, model_names, model_class, precision, num_threads,
     if use_gpu:
         backend = "cuda"
         backend_config = "cuda"
-        args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa"]
+        args = ["--iree-cuda-llvm-target-arch=sm_80"]
         ireert.flags.FUNCTION_INPUT_VALIDATION = False
         ireert.flags.parse_flags("--cuda_allow_inline_execution")
 
