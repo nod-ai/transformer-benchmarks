@@ -23,7 +23,7 @@ ARGUMENT_LIST=(
     "torchscript"
     "tensorflow"
     "iree"
-    "shark"
+    "amdshark"
     "pip_install_pkg"
     "ort_optimizer"
     "create_venv"
@@ -38,7 +38,7 @@ run_cpu_fp32=false
 run_cpu_int8=false
 # Engines to test.
 run_ort=true
-run_shark=false
+run_amdshark=false
 run_torch=false
 run_torchscript=true
 run_tensorflow=true
@@ -94,8 +94,8 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
 	
-	--shark)
-	    run_shark=$2
+	--amdshark)
+	    run_amdshark=$2
 	    shift 2
 	    ;;
 
@@ -156,7 +156,7 @@ echo "cpu_int8 $run_cpu_int8"
 
 echo "ort $run_ort"
 echo "ort_optimizer $use_optimizer"
-echo "shark $run_shark"
+echo "amdshark $run_amdshark"
 echo "torch $run_torch"
 echo "torchscript $run_torchscript"
 echo "tensorflow $run_tensorflow"
@@ -245,8 +245,8 @@ if [ "$install_pkg" = true ] ; then
   ### Installing IREE-Python
   python -m pip install iree-compiler iree-runtime iree-tools-tf iree-tools-tflite iree-tools-xla --find-links https://github.com/google/iree/releases
 
-	if [ "$run_shark" = true ] ; then
-		### Installing shark
+	if [ "$run_amdshark" = true ] ; then
+		### Installing amdshark
 		git submodule update --init
 		pip install -r `pwd`/thirdparty/SHARK/requirements.txt --no-cache-dir
 		python -m pip install --find-links https://github.com/llvm/torch-mlir/releases torch-mlir
@@ -287,10 +287,10 @@ run_one_test() {
       fi
     fi
 
-    if [ "$run_shark" = true ] ; then
-      echo python $benchmark_script -e shark -m $1 $benchmark_options $2 $3 $4 >> benchmark.log
+    if [ "$run_amdshark" = true ] ; then
+      echo python $benchmark_script -e amdshark -m $1 $benchmark_options $2 $3 $4 >> benchmark.log
       if [ "$run_tests" = true ] ; then
-        python $benchmark_script -e shark -m $1 $benchmark_options $2 $3 $4
+        python $benchmark_script -e amdshark -m $1 $benchmark_options $2 $3 $4
       fi
     fi
 
