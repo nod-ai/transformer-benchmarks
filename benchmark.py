@@ -43,11 +43,11 @@ import logging
 import timeit
 from datetime import datetime
 import numpy
-shark_installed = True
+amdshark_installed = True
 try:
-    from shark.shark_runner import SharkInference
+    from amdshark.amdshark_runner import AMDSharkInference
 except ImportError:
-    shark_installed = False
+    amdshark_installed = False
 import os
 import psutil
 import onnx
@@ -267,7 +267,7 @@ class ModuleFactory(torch.nn.Module):
         return self.model.forward(tokens)[0]
 
 
-def run_shark(use_gpu, model_names, model_class, precision, num_threads,
+def run_amdshark(use_gpu, model_names, model_class, precision, num_threads,
               batch_sizes, sequence_lengths, repeat_times, torchscript,
               cache_dir, verbose):
     results = []
@@ -290,11 +290,11 @@ def run_shark(use_gpu, model_names, model_class, precision, num_threads,
         logger.debug(f"Number of parameters {model.num_parameters()}")
 
         if precision == Precision.FLOAT16:
-            print("FLOAT16 Not yet supported by shark")
+            print("FLOAT16 Not yet supported by amdshark")
             return []
 
         if precision == Precision.INT8:
-            print("INT8 Not yet supported by shark")
+            print("INT8 Not yet supported by amdshark")
             return []
 
         device = torch.device("cuda:0" if use_gpu else "cpu")
@@ -309,23 +309,23 @@ def run_shark(use_gpu, model_names, model_class, precision, num_threads,
                                           size=(batch_size, sequence_length),
                                           dtype=torch.long,
                                           device=device)
-                shark_module = SharkInference(
+                amdshark_module = AMDSharkInference(
                     ModuleFactory(model_name), (input_ids, ),
                     device="gpu" if use_gpu else "cpu",
                     jit_trace=True)
                 try:
 
-                    inference = shark_module.forward
+                    inference = amdshark_module.forward
                     inference((input_ids, ))
-                    runtimes = timeit.repeat(lambda: shark_module.forward(
+                    runtimes = timeit.repeat(lambda: amdshark_module.forward(
                         (input_ids, )),
                                              repeat=repeat_times,
                                              number=1)
 
                     result = {
-                        "engine": "shark",
+                        "engine": "amdshark",
                         "version":
-                        "1.0",  #TODO: replace with shark version when shark is versioned
+                        "1.0",  #TODO: replace with amdshark version when amdshark is versioned
                         "device": "cuda" if use_gpu else "cpu",
                         "optimizer": "",
                         "precision": precision,
@@ -633,7 +633,7 @@ def parse_arguments():
                         default=['onnxruntime'],
                         choices=[
                             'onnxruntime', 'torch', 'torchscript',
-                            'tensorflow', 'iree', 'shark'
+                            'tensorflow', 'iree', 'amdshark'
                         ],
                         help="Engines to benchmark")
 
@@ -736,11 +736,11 @@ def main():
         except OSError:
             logger.error("Creation of the directory %s failed" % args.cache_dir)
 
-    enable_shark = "shark" in args.engines
-    if enable_shark:
-        if not shark_installed:
-            enable_shark = False
-            logger.warning("Flags set shark to enabled but shark is not installed")
+    enable_amdshark = "amdshark" in args.engines
+    if enable_amdshark:
+        if not amdshark_installed:
+            enable_amdshark = False
+            logger.warning("Flags set amdshark to enabled but amdshark is not installed")
     enable_torch = "torch" in args.engines
     enable_torchscript = "torchscript" in args.engines
     enable_onnxruntime = "onnxruntime" in args.engines
@@ -752,13 +752,13 @@ def main():
     for num_threads in args.num_threads:
         torch.set_num_threads(num_threads)
         logger.debug(torch.__config__.parallel_info())
-        if enable_torch or enable_torchscript or enable_shark:
+        if enable_torch or enable_torchscript or enable_amdshark:
             if args.input_counts != [1]:
                 logger.warning("--input_counts is not implemented for torch or torchscript engine.")
 
-            if enable_shark:
-                logger.info("running shark...")
-                results += run_shark(args.use_gpu, args.models,
+            if enable_amdshark:
+                logger.info("running amdshark...")
+                results += run_amdshark(args.use_gpu, args.models,
                                      args.model_class, args.precision,
                                      num_threads, args.batch_sizes,
                                      args.sequence_lengths, args.test_times,
