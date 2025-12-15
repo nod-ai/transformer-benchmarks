@@ -113,10 +113,10 @@ ln -s ${TIMESTAMP} latest
 cd ../
 
 echo "Remove old symlink.."
-gsutil rm -rf gs://shark-public/nod-perf/results/transformer-bench/latest
+gsutil rm -rf gs://amdshark-public/nod-perf/results/transformer-bench/latest
 
 echo "Copying to Google Storage.."
-gsutil cp -r transformer-bench-results/* gs://shark-public/nod-perf/results/transformer-bench/
+gsutil cp -r transformer-bench-results/* gs://amdshark-public/nod-perf/results/transformer-bench/
 
 if [ "$NO_SRC" = true ]; then
   echo "leaving sources and results for manual clean up"

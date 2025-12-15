@@ -2,5 +2,5 @@
 	path = mmperf
 	url = https://github.com/mmperf/mmperf
 [submodule "thirdparty/SHARK"]
-	path = thirdparty/SHARK
+	path = thirdparty/AMD-SHARK
 	url = https://github.com/nod-ai/SHARK.git
