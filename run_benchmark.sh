@@ -248,10 +248,10 @@ if [ "$install_pkg" = true ] ; then
 	if [ "$run_amdshark" = true ] ; then
 		### Installing amdshark
 		git submodule update --init
-		pip install -r `pwd`/thirdparty/SHARK/requirements.txt --no-cache-dir
+		pip install -r `pwd`/thirdparty/AMD-SHARK/requirements.txt --no-cache-dir
 		python -m pip install --find-links https://github.com/llvm/torch-mlir/releases torch-mlir
 		python -m pip install ninja
-		python -m pip install thirdparty/SHARK
+		python -m pip install thirdparty/AMD-SHARK
 	fi 
 
 fi
