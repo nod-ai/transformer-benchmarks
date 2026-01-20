@@ -59,9 +59,9 @@ if __name__ == "__main__":
     #backend_config = "dylib"
     backend = "cuda"
     backend_config = "cuda"
-    #args = ["--iree-cuda-llvm-target-arch=sm_75", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
+    #args = ["--iree-cuda-llvm-target-arch=sm_75", "--iree-enable-fusion-with-reduction-ops"]
     # FIXME: Stella's GPU is only 7.5
-    args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-hal-cuda-disable-loop-nounroll-wa", "--iree-enable-fusion-with-reduction-ops"]
+    args = ["--iree-cuda-llvm-target-arch=sm_80", "--iree-enable-fusion-with-reduction-ops"]
     flatbuffer_blob = compile_str(compiler_module, target_backends=[backend], extra_args=args, input_type="mhlo")
     #flatbuffer_blob = compile_str(compiled_data, target_backends=["dylib-llvm-aot"])
 
